@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Doctor-Patient Interface</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #abdded, #92e1e9);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            width: 100%;
+            background-color: #000; /* Black navbar */
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar-logo img {
+            height: 50px; /* Logo image size */
+            margin-right: 15px;
+        }
+
+        .navbar-logo span {
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .navbar-logo:hover span {
+            color: #a4d2ff; /* Beautiful Dodger Blue */
+            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7); /* Blue Glow */
+        }
+
+        /* Form Container */
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            margin-top: 10px; /* Push form below navbar */
+        }
+
+        /* Left Side - Doctor Image */
+        .image-section {
+            flex: 1;
+            background: linear-gradient(135deg, #22bfc7, #84b0fb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer; /* Makes image clickable */
+        }
+
+        .image-section img {
+            height: 400px;
+            object-fit: cover;
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+            
+        }
+
+        /* Right Side - Login Form */
+        .form-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-section h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 72, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(145deg, #047cde, #0c76cc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 72, 255, 0.4);
+            background: #00abfb;
+        }
+
+        /* Links */
+        .links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #1a73e8;
+            transition: color 0.3s;
+        }
+
+        .links a:hover {
+            color: #004e92;
+        }
+
+        .center-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .center-link a {
+            text-decoration: none;
+            color: #1a73e8;
+            transition: color 0.3s;
+        }
+
+        .center-link a:hover {
+            color: #004e92;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                width: 95%;
+            }
+
+            .image-section {
+                display: none; /* Hide image on small screens */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar" id="logo">
+        <div class="navbar-logo">
+            <img src="/assets/logo.png" alt="Logo">
+            <span>Doctor-Patient Interface</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Left: Doctor Image (Clickable to Go to Index Page) -->
+        <div class="image-section" onclick="location.href='/'">
+            <img src="/assets/doctor-model1.jpg" alt="Doctor Image">
+        </div>
+
+        <!-- Right: Login Form -->
+        <div class="form-section">
+            <h2>Welcome Back!</h2>
+            <form id="login-form" action="/auth/login" method="POST">
+                <!-- Role Selector -->
+                <div class="form-group">
+                    <label for="role">Select Your Role:</label>
+                    <select id="role" name="role" required>
+                        <option value="" disabled selected>Your Role</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="patient">Patient</option>
+                    </select>
+                </div>
+
+                  
+            <!-- Status Messages -->
+            <div id="status-icon"></div>
+            <p id="success-msg" style="color: green; display: none;">Successfully logged in!</p>
+            <p id="error-msg" style="color: red; display: none;">Invalid credentials. Please try again.</p>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <!-- Forgot Password (Above Login Button) -->
+                <div class="links">
+                    <a href="/auth/forgotPassword">Forgot Password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn">Login</button>
+
+                <!-- Sign Up Link -->
+                <div class="center-link">
+                    <span>Don't have an account? </span><a href="/register">Sign Up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="/js/login.js"></script> <!-- Link to Login Script -->
+
+    <script>
+    // Admin Login Trigger on Logo Tap
+    let tapCount = 0;
+    const logo = document.getElementById('logo');
+
+    logo.addEventListener('click', () => {
+        tapCount++;
+        if (tapCount === 5) {
+            window.location.href = '/auth/adminDashboard'; // Redirect to admin login
+        }
+        setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
+    });
+</script>
+</body>
+
+</html>

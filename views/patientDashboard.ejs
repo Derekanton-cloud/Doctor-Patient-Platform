@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+
+<body>
+  <header>
+    <h1>Welcome, <%= user.firstName %>!</h1>
+    <a href="/logout">Logout</a>
+  </header>
+
+  <!-- Doctor List -->
+  <h2>Available Doctors</h2>
+  <ul id="doctorList">
+    <% doctors.forEach(doctor => { %>
+      <li>
+        <p><strong>Dr. <%= doctor.firstName %> <%= doctor.lastName %></strong> - <%= doctor.specialization %></p>
+        <button onclick="openAppointmentForm('<%= doctor._id %>')">Book Appointment</button>
+        <% if (doctor.approvedAppointment) { %>
+          <button onclick="startVideoCall('<%= doctor._id %>')">Start Video Call</button>
+        <% } %>
+      </li>
+    <% }); %>
+  </ul>
+
+  <!-- Appointment Form -->
+  <div id="appointmentForm" style="display: none;">
+    <h2>Book an Appointment</h2>
+    <form id="appointmentForm" method="POST" action="/appointments/schedule">
+      <input type="hidden" id="doctorId" name="doctorId">
+      <label>Date: <input type="date" name="date" required></label>
+      <label>Time: <input type="time" name="time" required></label>
+      <label>Reason: <textarea name="reason" required></textarea></label>
+      <button type="submit">Submit</button>
+      <button type="button" onclick="closeAppointmentForm()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- New: Patient's Appointment Section -->
+<h2>My Appointments</h2>
+
+<!-- Upcoming Appointments -->
+<h3>Upcoming Appointments</h3>
+<ul id="upcomingAppointments">
+  <% if (upcomingAppointments.length > 0) { %>
+    <% upcomingAppointments.forEach(appointment => { %>
+      <li>
+        <p><strong>Dr. <%= appointment.doctor.firstName %> <%= appointment.doctor.lastName %></strong> - <%= appointment.doctor.specialization %></p>
+        <p><strong>Date:</strong> <%= appointment.date.toDateString() %> | <strong>Time:</strong> <%= appointment.time %></p>
+        <button onclick="startVideoCall('<%= appointment.doctor._id %>')">Start Video Call</button>
+      </li>
+    <% }); %>
+  <% } else { %>
+    <p>No upcoming appointments.</p>
+  <% } %>
+</ul>
+
+<!-- Past Appointments -->
+<h3>Past Appointments</h3>
+<ul id="pastAppointments">
+  <% if (pastAppointments.length > 0) { %>
+    <% pastAppointments.forEach(appointment => { %>
+      <li>
+        <p><strong>Dr. <%= appointment.doctor.firstName %> <%= appointment.doctor.lastName %></strong> - <%= appointment.doctor.specialization %></p>
+        <p><strong>Date:</strong> <%= appointment.date.toDateString() %> | <strong>Time:</strong> <%= appointment.time %></p>
+      </li>
+    <% }); %>
+  <% } else { %>
+    <p>No past appointments.</p>
+  <% } %>
+</ul>
+
+  <!-- Prescription List -->
+  <h2>Your Prescriptions</h2>
+  <% if (prescriptions.length > 0) { %>
+    <ul>
+      <% prescriptions.forEach(prescription => { %>
+        <li>
+          <p><strong>Issued by:</strong> Dr. <%= prescription.doctorName %></p>
+          <p><strong>Date:</strong> <%= prescription.date %></p>
+          <a href="/prescriptions/<%= prescription._id %>" target="_blank">View Prescription</a>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No prescriptions available.</p>
+  <% } %>
+
+  <script>
+    function openAppointmentForm(doctorId) {
+      document.getElementById('doctorId').value = doctorId;
+      document.getElementById('appointmentForm').style.display = 'block';
+    }
+
+    function closeAppointmentForm() {
+      document.getElementById('appointmentForm').style.display = 'none';
+    }
+
+    // Initiate Video Call
+    function startVideoCall(doctorId) {
+      window.location.href = `/video-call/${doctorId}`;
+    }
+  </script>
+
+</body>
+
+</html>

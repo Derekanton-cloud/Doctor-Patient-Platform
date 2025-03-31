@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Admin Login - Doctor-Patient Interface</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">Doctor-Patient Interface</a>
+  </nav>
+
+  <div class="otp-container">
+    <form action="/admin/login" method="POST">
+      <h2>Admin Login</h2>
+      <div class="input-group">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+
+</html>

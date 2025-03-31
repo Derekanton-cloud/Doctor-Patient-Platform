@@ -1,0 +1,36 @@
+{
+  "name": "doctor-patient-interface",
+  "version": "1.0.0",
+  "description": "Doctor-Patient Interface for video consultations and prescriptions",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "doctor",
+    "patient",
+    "video-call",
+    "prescription"
+  ],
+  "author": "Derek",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.13.0",
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^6.10.0",
+    "socket.io": "^4.8.1",
+    "twilio": "^5.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
