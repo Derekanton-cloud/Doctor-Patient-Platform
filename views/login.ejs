@@ -233,13 +233,13 @@
                 <!-- Email -->
                 <div class="form-group">
                     <label for="email">Email Address:</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
                 </div>
 
                 <!-- Password -->
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="new-password" required>
                 </div>
 
                 <!-- Forgot Password (Above Login Button) -->
@@ -269,7 +269,7 @@
     logo.addEventListener('click', () => {
         tapCount++;
         if (tapCount === 5) {
-            window.location.href = '/auth/adminDashboard'; // Redirect to admin login
+            window.location.href = '/adminDashboard'; // Redirect to admin login
         }
         setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
     });

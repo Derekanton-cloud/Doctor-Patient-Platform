@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
   // Patient-specific fields
   bloodGroup: { type: String, match: /^(A|B|AB|O)[+-]$/, required: false },
   medicalHistory: { type: String },
-  medicalFiles: { type: String },
+  medicalFiles: { type: [String] }, // Array of file paths
+  governmentIssuedIdPatient: { type: [String] }, // For patient ID
   patientId: { type: String },
 
   // Doctor-specific fields
@@ -29,7 +30,7 @@ const userSchema = new mongoose.Schema({
   boardCertificate: { type: String },
   specialization: { type: String },
   hospitalName: { type: String },
-  doctorPhoto: { type: String },
+  governmentIssuedId: { type: String },
   doctorId: { type: String },
 
   // Verification and Approval

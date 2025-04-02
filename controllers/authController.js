@@ -23,9 +23,25 @@ const generateToken = (user) => {
   });
 };
 
+// Check if user already exists
+exports.checkUserExists = async (req, res) => {
+  try {
+    const { email } = req.query; // Get email from query params
+    const user = await User.findOne({ email });
+
+    return res.json({ exists: !!user }); // Return true if user exists
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Register User
 exports.registerUser = async (req, res) => {
   try {
+    console.log("Processing Registration...");
+    console.log("Received Data:", req.body);
+    console.log("Received Files:", req.files);
+
     const {
       role,
       firstName,
@@ -39,20 +55,36 @@ exports.registerUser = async (req, res) => {
       password,
       bloodGroup,
       medicalHistory,
-      medicalFiles,
       licenseNumber,
-      licenseCertificate,
-      boardCertificate,
       specialization,
       hospitalName,
-      doctorPhoto,
     } = req.body;
 
-    // Check if user exists
+    // Fetch Uploaded Files
+    const medicalFiles = req.files?.medicalFiles?.map(file => file.path) || [];
+    const governmentIssuedIdPatient = req.files?.governmentIssuedIdPatient?.map(file => file.path) || [];
+    const licenseCertificate = req.files?.licenseCertificate?.[0]?.path || null;
+    const boardIssuedDocument = req.files?.boardCertificate?.[0]?.path || null;
+    const governmentIssuedId = req.files?.governmentIssuedId?.[0]?.path || null;
+
+    // Validation: Required Fields
+    if (!firstName || !lastName || !dob || !gender || !email || !phone || !emergencyContact || !languages || !password) {
+      return res.status(400).json({ success: false, message: "All required fields must be filled." });
+    }
+
+    // Role-based Validation
+    if (role === "doctor" && (!licenseNumber || !specialization || !hospitalName || !licenseCertificate || !boardCertificate)) {
+      return res.status(400).json({ success: false, message: "Doctors must provide all required details and documents." });
+    }
+
+    if (role === "patient" && (!bloodGroup || !medicalHistory || medicalFiles.length === 0)) {
+      return res.status(400).json({ success: false, message: "Patients must provide blood group, medical history, and files." });
+    }
+
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log("User already exists:", existingUser); // Debugging log
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ success: false, message: "User already exists." });
     }
 
     // Hash Password
@@ -70,39 +102,50 @@ exports.registerUser = async (req, res) => {
       emergencyContact,
       languages,
       password: hashedPassword,
+      isVerified: false, // Initial status
     });
 
-    // Role-based fields
     if (role === "patient") {
       user.bloodGroup = bloodGroup;
       user.medicalHistory = medicalHistory;
       user.medicalFiles = medicalFiles;
+      user.governmentIssuedIdPatient = governmentIssuedIdPatient;
       user.patientId = `P-${Date.now()}`;
     } else if (role === "doctor") {
       user.licenseNumber = licenseNumber;
       user.licenseCertificate = licenseCertificate;
-      user.boardCertificate = boardCertificate;
+      user.boardCertificate = boardIssuedDocument;
       user.specialization = specialization;
       user.hospitalName = hospitalName;
-      user.doctorPhoto = doctorPhoto;
+      user.governmentIssuedId = governmentIssuedId;
       user.doctorId = `D-${Date.now()}`;
       user.isApproved = false; // Pending admin approval
     }
 
     // Send and store OTP
-    const { hashedOTP, otpExpiry } = await sendOTP(email);
-    const hashedOtp = await bcrypt.hash(hashedOTP, 10); // Hash OTP before storing it
-    user.otp = hashedOtp;
-    user.otpExpiry = otpExpiry;
+    try {
+      const { hashedOTP, otpExpiry } = await sendOTP(email);
+      user.otp = hashedOTP;
+      user.otpExpiry = otpExpiry;
+    } catch (otpError) {
+      console.error("Error sending OTP:", otpError);
+      return res.status(500).json({ success: false, message: "Failed to send OTP. Please try again." });
+    }
 
-    await user.save();
-    res.status(200).json({ message: "User registered. OTP sent to email." });
-  } catch (err) {
-    res.status(500).json({ error: "Registration failed" });
+    // Save the user to the database
+    try {
+      await user.save();
+      res.status(200).json({ success: true, message: "User registered. OTP sent to email." });
+    } catch (dbError) {
+      console.error("Error saving user to database:", dbError);
+      return res.status(500).json({ success: false, message: "Failed to save user. Please try again." });
+    }
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-// Verify OTP
 exports.verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -149,10 +192,6 @@ exports.verifyOTP = async (req, res) => {
       if (user.governmentID) {
         attachments.push({ filename: "Government_ID.pdf", path: user.governmentID });
       }
-      if (user.doctorPhoto) {
-        attachments.push({ filename: "Doctor_Photo.jpg", path: user.doctorPhoto });
-      }
-
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: adminEmails,
@@ -200,7 +239,6 @@ exports.sendTestOTP = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" }); // Handle error
   }
 };
-
 
 exports.loginUser = async (req, res) => {
   try {
@@ -260,5 +298,22 @@ exports.resetPassword = async (req, res) => {
     res.status(200).json({ message: "Password updated successfully." });
   } catch (err) {
     res.status(500).json({ error: "Failed to reset password" });
+  }
+};
+
+// Delete User
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.body.userId; // Assuming user ID is sent in the request body
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
