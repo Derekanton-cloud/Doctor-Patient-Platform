@@ -8,21 +8,22 @@ const { authenticateUser, authorizeRole } = require("../middleware/authMiddlewar
 const upload = multer({ dest: "uploads/" });
 
 // Authentication Routes
-router.post("/login", authController.loginUser);
-
 router.get("/check-user", authController.checkUserExists);
 
 router.post(
   "/register",
   upload.fields([
     { name: "medicalFiles", maxCount: 5 }, // For patient medical files
-    { name: "licenseCertificate", maxCount: 1 }, // For doctor license certificate
-    { name: "boardIssuedDocument", maxCount: 1 }, // For doctor board-issued document
-    { name: "governmentIssuedId", maxCount: 1 }, // For doctor photo
+    { name: "licenseCertificates", maxCount: 5 }, // For doctor license certificate
+    { name: "boardIssuedDocuments", maxCount: 5 }, // For doctor board-issued document
+    { name: "governmentIssuedIds", maxCount: 5 }, // For doctor photo
     { name: "governmentIssuedIdPatient", maxCount: 1 }, // For patient government-issued ID
   ]),
   authController.registerUser
 );
+
+router.post("/login", authController.loginUser);
+router.post('/debug-reset-password', authController.debugResetPassword);
 
 
 // OTP Routes

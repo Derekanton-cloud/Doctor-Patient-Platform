@@ -109,10 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showOTPModal() {
         // Blur the registration page
-        document.querySelector(".container").style.filter = "blur(5px)";
+        document.querySelector(".container").style.filter = "blur(0px)";
     
         // Show the overlay
-        document.getElementById("overlay").classList.remove("hidden");
+        document.getElementById("overlay").style.display = "block";
     
         // Show the OTP modal
         document.getElementById("otp-section").classList.remove("hidden");
@@ -151,7 +151,7 @@ async function verifyOTP() {
 
     if (data.success) {
         alert(elements.roleSelect.value === "patient" ? "Successfully registered!" : "Application sent: Waiting for approval.");
-        window.location.href = elements.roleSelect.value === "patient" ? "/dashboard" : "/";
+        window.location.href = "/login"; // Redirect to login page after successful registration
         document.querySelector(".container").style.filter = "none";
         document.getElementById("overlay").classList.add("hidden");
         document.getElementById("otp-section").classList.add("hidden");

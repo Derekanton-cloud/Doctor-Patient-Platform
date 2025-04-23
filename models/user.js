@@ -26,11 +26,11 @@ const userSchema = new mongoose.Schema({
 
   // Doctor-specific fields
   licenseNumber: { type: String },
-  licenseCertificate: { type: String },
-  boardCertificate: { type: String },
+  licenseCertificates: { type:[String] },
+  boardIssuedDocuments: { type: [String] },
   specialization: { type: String },
-  hospitalName: { type: String },
-  governmentIssuedId: { type: String },
+  currentWorkingHospital: { type: String },
+  governmentIssuedIds: { type: [String] },
   doctorId: { type: String },
 
   // Verification and Approval

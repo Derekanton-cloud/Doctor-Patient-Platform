@@ -8,42 +8,72 @@ document.addEventListener("DOMContentLoaded", () => {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
+            // Get form values
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value.trim();
+            const role = document.getElementById("role").value;
 
-            if (!email || !password) {
-                showError("Please enter both email and password.");
+            // Validate input
+            if (!email || !password || !role) {
+                showError("Please enter email, password, and select a role.");
                 return;
             }
 
             try {
-                const response = await fetch("http://localhost:3000/auth/login", {
+                // Show loading state
+                showLoading("Logging in...");
+
+                const response = await fetch("/auth/login", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password })
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({ email, password, role })
                 });
 
                 const data = await response.json();
 
-                if (response.ok && data) {
-                    showSuccess("Successfully logged in");
-                    sessionStorage.setItem("token", data.token); // Store the token in sessionStorage
-
-                    setTimeout(() => {
-                        if (data.role === "patient") {
-                            window.location.href = "/dashboard/patient";
-                        } else if (data.role === "doctor" && data.approved) {
-                            window.location.href = "/dashboard/doctor";
-                        } else if (data.role === "admin") {
-                            window.location.href = "/admin/dashboard";
-                        } else {
-                            showError("Admin approval required or invalid role.");
+                // Handle different response statuses
+                switch (response.status) {
+                    case 200:
+                        if (data.showOtpModal) {
+                            showInfo("OTP sent to your email. Please verify.");
+                            showOTPModal();
+                            return;
                         }
-                    }, 1500);
-                } else {
-                    showError(data?.message || "Invalid credentials");
+
+                        if (data.status === "success") {
+                            // Store user data and token
+                            sessionStorage.setItem("token", data.token);
+                            sessionStorage.setItem("user", JSON.stringify(data.user));
+                            
+                            showSuccess(data.message || "Successfully logged in");
+
+                            // Redirect after delay
+                            setTimeout(() => {
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                } else {
+                                    showError("Invalid redirection path.");
+                                }
+                            }, 1500);
+                        }
+                        break;
+
+                    case 403:
+                        showError(data.error || "Account pending approval");
+                        break;
+
+                    case 400:
+                        showError(data.error || "Invalid credentials");
+                        break;
+
+                    default:
+                        showError("An unexpected error occurred");
                 }
             } catch (error) {
+                console.error("Login Error:", error);
                 showError("Server error. Please try again later.");
             }
         });
@@ -61,6 +91,32 @@ document.addEventListener("DOMContentLoaded", () => {
         errorMsg.textContent = message;
         errorMsg.style.display = "block";
         successMsg.style.display = "none";
+    }
+
+    function showInfo(message) {
+        statusIcon.className = "blue-info";
+        successMsg.textContent = message;
+        successMsg.style.display = "block";
+        errorMsg.style.display = "none";
+    }
+
+    function showLoading(message) {
+        statusIcon.className = "loading";
+        successMsg.textContent = message;
+        successMsg.style.display = "block";
+        errorMsg.style.display = "none";
+    }
+
+    function showOTPModal() {
+        const otpSection = document.getElementById("otp-section");
+        if (otpSection) {
+            otpSection.classList.remove("hidden");
+            // Focus on first OTP input if exists
+            const firstOtpInput = otpSection.querySelector('input[type="text"]');
+            if (firstOtpInput) {
+                firstOtpInput.focus();
+            }
+        }
     }
 });
 
