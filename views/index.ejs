@@ -38,8 +38,10 @@
         }
 
         .navbar-logo:hover h1 {
-            color: #a4d2ff; /* Beautiful Dodger Blue */
-            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7); /* Blue Glow */
+            color: #a4d2ff;
+            /* Beautiful Dodger Blue */
+            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
+            /* Blue Glow */
         }
 
         .navbar-logo h1 {
@@ -55,7 +57,8 @@
 
         .navbar-links {
             display: flex;
-            justify-content: center; /* Centering the links */
+            justify-content: center;
+            /* Centering the links */
             gap: 50px;
             margin-left: -240px;
             margin-bottom: -40px;
@@ -71,8 +74,10 @@
         .navbar-links a:hover {
             opacity: 0.9;
             transform: translateY(-2px);
-            color: #a4d2ff; /* Beautiful Dodger Blue */
-            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7); /* Blue Glow */
+            color: #a4d2ff;
+            /* Beautiful Dodger Blue */
+            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
+            /* Blue Glow */
         }
 
         .navbar-buttons {
@@ -92,8 +97,10 @@
 
         .hamburger-menu:hover div {
             transform: scale(1.3);
-            background-color: #a4d2ff; /* Beautiful Dodger Blue */
-            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.7); /* Blue Glow */
+            background-color: #a4d2ff;
+            /* Beautiful Dodger Blue */
+            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
+            /* Blue Glow */
         }
 
         .hamburger-menu div {
@@ -113,7 +120,7 @@
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
             transition: right 0.3s ease;
             z-index: 2000;
-            
+
         }
 
         .menu-container.open {
@@ -129,7 +136,7 @@
             color: white;
             font-size: 17px;
             font-weight: bold;
-            
+
         }
 
         .menu-header img {
@@ -154,13 +161,14 @@
             box-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
         }
 
-        
+
 
         .btn {
             padding: 12px 25px;
             border: none;
             border-radius: 30px;
-            background: linear-gradient(145deg, #1E90FF, #4682B4); /* Gradient Blue */
+            background: linear-gradient(145deg, #1E90FF, #4682B4);
+            /* Gradient Blue */
             color: white;
             font-size: 16px;
             cursor: pointer;
@@ -168,9 +176,12 @@
         }
 
         .btn:hover {
-            transform: translateY(-4px) scale(1.05); /* 3D Pop Effect */
-            box-shadow: 0 12px 25px rgba(30, 144, 255, 0.4); /* Soft Blue Glow */
-            background: linear-gradient(145deg, #4682B4, #1E90FF); /* Reverse Gradient */
+            transform: translateY(-4px) scale(1.05);
+            /* 3D Pop Effect */
+            box-shadow: 0 12px 25px rgba(30, 144, 255, 0.4);
+            /* Soft Blue Glow */
+            background: linear-gradient(145deg, #4682B4, #1E90FF);
+            /* Reverse Gradient */
         }
 
         section {
@@ -204,14 +215,74 @@
         }
 
         .doctor-image img {
-            width: 650px; /* Set a fixed width */
-            max-width: 100%; /* Ensure responsiveness */
-            height: 500px; /* Maintain aspect ratio */
+            width: 650px;
+            /* Set a fixed width */
+            max-width: 100%;
+            /* Ensure responsiveness */
+            height: 500px;
+            /* Maintain aspect ratio */
             border-radius: 20px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             margin-top: -60px;
         }
-        
+
+        .slider-container {
+            position: relative;
+            width: 650px;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .dots-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            padding: 0;
+            background: transparent;
+            z-index: 2;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .dot.active {
+            background: #FFD700;
+            border: 1px solid #000;
+            box-shadow: none;
+        }
+
 
         #mission-page,
         #goals-page,
@@ -226,6 +297,13 @@
         #about-page h2 {
             font-size: 3rem;
             color: #333333;
+        }
+
+        #features-page h2 {
+            font-size: 3rem;
+            color: #333333;
+            text-align: center;
+            margin-top: -10px;
         }
 
         #mission-page p,
@@ -269,6 +347,7 @@
             color: #555555;
         }
 
+
         .footer {
             background: linear-gradient(135deg, #000000, #1a1a1a);
             color: #fff;
@@ -276,7 +355,7 @@
             position: relative;
             margin-top: 50px;
         }
-    
+
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -285,77 +364,125 @@
             gap: 40px;
             padding: 0 20px;
         }
-    
+
         .footer-section {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
-    
+
         .footer-logo {
             display: flex;
             align-items: center;
             gap: 10px;
-        margin-bottom: 20px;
-    }
+            margin-bottom: 20px;
+        }
 
-    .footer-logo img {
-        width: 40px;
-        height: auto;
-    }
+        .footer-logo img {
+            width: 40px;
+            height: auto;
+        }
 
-    .footer-logo h3 {
-        font-size: 1.5rem;
-        margin: 0;
-        color: #fff;
-    }
+        .footer-logo h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #fff;
+        }
 
-    .footer-section h4 {
-        color: #a4d2ff;
-        margin-bottom: 20px;
-        font-size: 1.2rem;
-    }
+        .footer-section h4 {
+            color: #a4d2ff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
 
-    .footer-section p {
-        margin: 5px 0;
-        color: #999;
-        line-height: 1.6;
-    }
+        .footer-section p {
+            margin: 5px 0;
+            color: #999;
+            line-height: 1.6;
+        }
 
-    .footer-section .social-links {
-        display: flex;
-        gap: 15px;
-        margin-top: 20px;
-    }
+        .footer-section .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-    .social-links a {
-        color: #fff;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
+        .social-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
 
-    .social-links a:hover {
-        color: #a4d2ff;
-    }
+        .social-links a:hover {
+            color: #a4d2ff;
+        }
 
-    .footer-bottom {
-        text-align: center;
-        margin-top: 40px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .footer-bottom p {
-        color: #666;
-        font-size: 0.9rem;
-    }
+        .footer-bottom p {
+            color: #666;
+            font-size: 0.9rem;
+        }
 
-    .simple-separator {
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #1E90FF, transparent);
-        margin: 50px 0;
-    }
+        .simple-separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #1E90FF, transparent);
+            margin: 50px 0;
+        }
+
+        #features-page {
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #abdded, #92e1e9);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+            padding: 0 1.2rem;
+            max-width: 1700px; 
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: left;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #1E90FF;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
     </style>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -369,6 +496,7 @@
         </div>
         <div class="navbar-links">
             <a href="#mission-page">Mission</a>
+            <a href="#features-page">Features</a>
             <a href="#goals-page">Goals</a>
             <a href="#about-page">About Us</a>
         </div>
@@ -391,10 +519,29 @@
     <section id="main-page">
         <div class="content">
             <h1>Your Health, Our Priority!</h1>
-            <p>Your health, your way—easily schedule appointments, consult with doctors online, and receive prescriptions from the comfort of your home. Connecting patients and doctors seamlessly through a user-friendly interface with advanced video consultations and digital prescriptions.</p>
+            <p>Your health, your way—easily schedule appointments, consult with doctors online, and receive
+                prescriptions from the comfort of your home. Connecting patients and doctors seamlessly through a
+                user-friendly interface with advanced video consultations and digital prescriptions.</p>
         </div>
         <div class="doctor-image">
-            <img src="/assets/doctor-model.jpg" alt="Doctor">
+            <div class="slider-container">
+                <div class="slider">
+                    <div class="slide">
+                        <img src="/assets/doctor-model.jpg" alt="Doctor 1">
+                    </div>
+                    <div class="slide">
+                        <img src="/assets/doctor-model2.jpg" alt="Doctor 2">
+                    </div>
+                    <div class="slide">
+                        <img src="/assets/doctor-model3.jpg" alt="Doctor 3">
+                    </div>
+                </div>
+                <div class="dots-container">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -402,95 +549,232 @@
 
     <section id="mission-page">
         <h2>Our Mission</h2>
-        <p>Our mission is to revolutionize healthcare by seamlessly connecting patients and healthcare providers through innovative technology. Our mission is to revolutionize healthcare by bridging the gap between patients and genuine, qualified doctors who are dedicated to serving communities with their knowledge and expertise. We strive to make quality healthcare accessible to everyone, including those in remote or underserved areas who struggle to receive the medical attention they need. Our platform empowers patients to connect with licensed medical professionals for consultations, ensuring they receive accurate diagnoses and personalized care from the comfort of their homes. We are committed to supporting individuals who cannot afford expensive consultations at reputed hospitals by offering an affordable and accessible alternative. By leveraging advanced technology, we provide seamless video consultations and digital prescriptions, breaking down financial and geographical barriers. Our vision is to create a world where no one is denied essential medical care, and every doctor has the opportunity to give back to society by using their education to improve lives. Through innovation and compassion, we aim to make healthcare a right, not a privilege. Nothing Personal, Just Service.</p>
+        <p>Our mission is to revolutionize healthcare by seamlessly connecting patients and healthcare providers through
+            innovative technology. Our mission is to revolutionize healthcare by bridging the gap between patients and
+            genuine, qualified doctors who are dedicated to serving communities with their knowledge and expertise. We
+            strive to make quality healthcare accessible to everyone, including those in remote or underserved areas who
+            struggle to receive the medical attention they need. Our platform empowers patients to connect with licensed
+            medical professionals for consultations, ensuring they receive accurate diagnoses and personalized care from
+            the comfort of their homes. We are committed to supporting individuals who cannot afford expensive
+            consultations at reputed hospitals by offering an affordable and accessible alternative. By leveraging
+            advanced technology, we provide seamless video consultations and digital prescriptions, breaking down
+            financial and geographical barriers. Our vision is to create a world where no one is denied essential
+            medical care, and every doctor has the opportunity to give back to society by using their education to
+            improve lives. Through innovation and compassion, we aim to make healthcare a right, not a privilege.
+            Nothing Personal, Just Service.</p>
     </section>
 
     <div class="simple-separator"></div>
 
-    <section id="goals-page">
-        <h2>Our Goals</h2>
-        <p>Our goal is to provide a robust, user-centric platform that facilitates easy and secure interactions between patients and medical professionals. We are dedicated to creating an environment where patients can access quality healthcare effortlessly, regardless of their location or financial situation. By leveraging advanced technology, we aim to remove the barriers to medical consultations, ensuring that everyone has the opportunity to receive timely, reliable, and affordable healthcare. We strive to connect patients with genuine, qualified doctors who are passionate about using their medical expertise to serve others. Our platform is designed to ensure that every interaction is safe, confidential, and tailored to the patient's needs. Whether it's offering virtual consultations for those in remote areas, providing affordable options for patients who cannot afford high consultation fees, or ensuring access to specialized care, our focus is on making healthcare more inclusive and accessible.</p>
+    <section id="features-page">
+        <h2>Our Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3>Video Consultations</h3>
+                <p>Connect with doctors through high-quality video calls from the comfort of your home. Experience
+                    face-to-face consultations with advanced telehealth technology.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Easy Scheduling</h3>
+                <p>Book appointments instantly with our user-friendly scheduling system. Choose your preferred doctor
+                    and time slot with just a few clicks.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3>Digital Prescriptions</h3>
+                <p>Receive and manage your prescriptions digitally. Access your medical documents securely anytime,
+                    anywhere.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3>Verified Doctors</h3>
+            <p>Consult with thoroughly verified and qualified healthcare professionals. We ensure all doctors are
+                licensed and experienced.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h3>Secure Platform</h3>
+            <p>Your health data is protected with enterprise-grade security. We maintain strict privacy standards and
+                data encryption.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>24/7 Accessibility</h3>
+            <p>Access healthcare services round the clock. Our platform is available 24/7 for your medical needs.</p>
+        </div>
     </section>
 
-    <div class="simple-separator"></div>
 
-    <section id="about-page">
-        <h2>About Us</h2>
-        <div class="admin-grid">
-            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin"><h3>AMRUTHA BHAT</h3><p>"Connecting Patients with Trusted Doctors."</p></div>
-            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin"><h3>HANSINI M N</h3><p>"Quality Care, Anytime, Anywhere."</p></div>
-            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin"><h3>CHANDRASHEKAR G V</h3><p>"Accessible Healthcare for Everyone."</p></div>
-            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin"><h3>DEREK ANTON</h3><p>"Your Health, Our Mission."</p></div>
-        </div>
-    </section>
+        <div class="simple-separator"></div>
 
-    <script>
-    // Admin Login Trigger on Logo Tap
-    let tapCount = 0;
-    const logo = document.getElementById('logo');
+        <section id="goals-page">
+            <h2>Our Goals</h2>
+            <p>Our goal is to provide a robust, user-centric platform that facilitates easy and secure interactions
+                between
+                patients and medical professionals. We are dedicated to creating an environment where patients can
+                access
+                quality healthcare effortlessly, regardless of their location or financial situation. By leveraging
+                advanced
+                technology, we aim to remove the barriers to medical consultations, ensuring that everyone has the
+                opportunity to receive timely, reliable, and affordable healthcare. We strive to connect patients with
+                genuine, qualified doctors who are passionate about using their medical expertise to serve others. Our
+                platform is designed to ensure that every interaction is safe, confidential, and tailored to the
+                patient's
+                needs. Whether it's offering virtual consultations for those in remote areas, providing affordable
+                options
+                for patients who cannot afford high consultation fees, or ensuring access to specialized care, our focus
+                is
+                on making healthcare more inclusive and accessible.</p>
+        </section>
 
-    logo.addEventListener('click', () => {
-        tapCount++;
-        if (tapCount === 5) {
-            window.location.href = '/adminDashboard'; // Redirect to admin login
-        }
-        setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
-    });
+        <div class="simple-separator"></div>
 
-    function toggleMenu() {
-        const menu = document.getElementById('menu');
-        menu.classList.toggle('open');
-    }
-
-    document.addEventListener('click', function (event) {
-        const menu = document.getElementById('menu');
-        const hamburger = document.querySelector('.hamburger-menu');
-
-        // Close the menu if clicked outside of it and the hamburger menu
-        if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
-            menu.classList.remove('open');
-        }
-    });
-</script>
-
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <div class="footer-logo">
-                <img src="/assets/logo.png" alt="Logo">
-                <h3>Doctor-Patient Interface</h3>
+        <section id="about-page">
+            <h2>About Us</h2>
+            <div class="admin-grid">
+                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                    <h3>AMRUTHA BHAT</h3>
+                    <p>"Connecting Patients with Trusted Doctors."</p>
+                </div>
+                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                    <h3>HANSINI M N</h3>
+                    <p>"Quality Care, Anytime, Anywhere."</p>
+                </div>
+                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                    <h3>CHANDRASHEKAR G V</h3>
+                    <p>"Accessible Healthcare for Everyone."</p>
+                </div>
+                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                    <h3>DEREK ANTON</h3>
+                    <p>"Your Health, Our Mission."</p>
+                </div>
             </div>
-            <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
-        </div>
-        
-        <div class="footer-section">
-            <h4>Contact Us</h4>
-            <p>Email: doctorpatientinterface@gmail.com</p>
-            <p>Phone: 9901527481</p>
-            <p>Address:  Shavige Malleshwara Hills, 91st Main Rd,
-            <br>  1st Stage, Kumaraswamy Layout,</p>
-            <p> Bengaluru, Karnataka 560078</p>
-        </div>
-        
-        <div class="footer-section">
-            <h4>Quick Links</h4>
-            <p><a href="#mission-page" style="color: #999; text-decoration: none;">Our Mission</a></p>
-            <p><a href="#goals-page" style="color: #999; text-decoration: none;">Our Goals</a></p>
-            <p><a href="#about-page" style="color: #999; text-decoration: none;">About Us</a></p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
+        </section>
+
+        <script>
+            // Admin Login Trigger on Logo Tap
+            let tapCount = 0;
+            const logo = document.getElementById('logo');
+
+            logo.addEventListener('click', () => {
+                tapCount++;
+                if (tapCount === 5) {
+                    window.location.href = '/adminDashboard'; // Redirect to admin login
+                }
+                setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
+            });
+
+            function toggleMenu() {
+                const menu = document.getElementById('menu');
+                menu.classList.toggle('open');
+            }
+
+            document.addEventListener('click', function (event) {
+                const menu = document.getElementById('menu');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                // Close the menu if clicked outside of it and the hamburger menu
+                if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
+                    menu.classList.remove('open');
+                }
+            });
+        </script>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="/assets/logo.png" alt="Logo">
+                        <h3>Doctor-Patient Interface</h3>
+                    </div>
+                    <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Email: doctorpatientinterface@gmail.com</p>
+                    <p>Phone: 9901527481</p>
+                    <p>Address: Shavige Malleshwara Hills, 91st Main Rd,
+                        <br> 1st Stage, Kumaraswamy Layout,
+                    </p>
+                    <p> Bengaluru, Karnataka 560078</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <p><a href="#mission-page" style="color: #999; text-decoration: none;">Our Mission</a></p>
+                    <p><a href="#features-page" style="color: #999; text-decoration: none;">Features</a></p>
+                    <p><a href="#goals-page" style="color: #999; text-decoration: none;">Our Goals</a></p>
+                    <p><a href="#about-page" style="color: #999; text-decoration: none;">About Us</a></p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
-        <p>Developed By Team DPI</p>
-    </div>
-</footer>
-    
+            <div class="footer-bottom">
+                <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+                <p>Developed By Team DPI</p>
+            </div>
+        </footer>
+
+        <script>
+            // Image slider functionality
+            const slider = document.querySelector('.slider');
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            const slideCount = document.querySelectorAll('.slide').length;
+
+            function updateSlider() {
+                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+                // Update dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSlide);
+                });
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slideCount;
+                updateSlider();
+            }
+
+            // Add click handlers to dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentSlide = index;
+                    updateSlider();
+                });
+            });
+
+            // Auto advance slides every 5 seconds
+            setInterval(nextSlide, 5000);
+
+            // Initial update
+            updateSlider();
+        </script>
+
 </body>
 
 </html>
