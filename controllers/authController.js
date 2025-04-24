@@ -149,15 +149,25 @@ exports.registerUser = async (req, res) => {
 exports.verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    console.log("🔍 Verifying OTP for:", email);
 
     // Validate OTP format
     if (!/^\d{6}$/.test(otp)) {
       return res.status(400).json({ error: "Invalid OTP format. Must be 6 digits." });
     }
 
-    const otpRecord = await OTP.findOne({ email });
-    if (!otpRecord) return res.status(400).json({ error: "OTP not found or expired." });
+    const otpRecord = await OTP.findOne({ 
+      email,
+      expiresAt: { $gt: new Date() }
+  });
 
+  if (!otpRecord) {
+    console.log("❌ No valid OTP found for:", email);
+    return res.status(400).json({
+        success: false,
+        message: "OTP expired or not found"
+    });
+}
     // Check if OTP is expired
     if (Date.now() > otpRecord.expiresAt) {
       await OTP.deleteOne({ email }); // Remove expired OTP
@@ -504,16 +514,28 @@ exports.resetPassword = async (req, res) => {
 // Delete User
 exports.deleteUser = async (req, res) => {
   try {
-    const userId = req.body.userId; // Assuming user ID is sent in the request body
-    const user = await User.findByIdAndDelete(userId);
+      const { email } = req.body;
+      
+      // Find and delete user
+      const result = await User.findOneAndDelete({ email });
+      
+      if (!result) {
+          return res.status(404).json({
+              success: false,
+              message: "User not found"
+          });
+      }
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ message: "User deleted successfully" });
+      console.log(`✅ User deleted: ${email}`);
+      res.status(200).json({
+          success: true,
+          message: "User successfully deleted"
+      });
   } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+      console.error("❌ Delete user error:", error);
+      res.status(500).json({
+          success: false,
+          message: "Failed to delete user"
+      });
   }
 };

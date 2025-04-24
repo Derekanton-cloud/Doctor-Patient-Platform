@@ -268,7 +268,97 @@
         .admin-card p {
             color: #555555;
         }
+
+        .footer {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: #fff;
+            padding: 50px 0;
+            position: relative;
+            margin-top: 50px;
+        }
+    
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            padding: 0 20px;
+        }
+    
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .footer-logo img {
+        width: 40px;
+        height: auto;
+    }
+
+    .footer-logo h3 {
+        font-size: 1.5rem;
+        margin: 0;
+        color: #fff;
+    }
+
+    .footer-section h4 {
+        color: #a4d2ff;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .footer-section p {
+        margin: 5px 0;
+        color: #999;
+        line-height: 1.6;
+    }
+
+    .footer-section .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .social-links a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+        color: #a4d2ff;
+    }
+
+    .footer-bottom {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-bottom p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .simple-separator {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #1E90FF, transparent);
+        margin: 50px 0;
+    }
     </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
@@ -308,15 +398,21 @@
         </div>
     </section>
 
+    <div class="simple-separator"></div>
+
     <section id="mission-page">
         <h2>Our Mission</h2>
         <p>Our mission is to revolutionize healthcare by seamlessly connecting patients and healthcare providers through innovative technology. Our mission is to revolutionize healthcare by bridging the gap between patients and genuine, qualified doctors who are dedicated to serving communities with their knowledge and expertise. We strive to make quality healthcare accessible to everyone, including those in remote or underserved areas who struggle to receive the medical attention they need. Our platform empowers patients to connect with licensed medical professionals for consultations, ensuring they receive accurate diagnoses and personalized care from the comfort of their homes. We are committed to supporting individuals who cannot afford expensive consultations at reputed hospitals by offering an affordable and accessible alternative. By leveraging advanced technology, we provide seamless video consultations and digital prescriptions, breaking down financial and geographical barriers. Our vision is to create a world where no one is denied essential medical care, and every doctor has the opportunity to give back to society by using their education to improve lives. Through innovation and compassion, we aim to make healthcare a right, not a privilege. Nothing Personal, Just Service.</p>
     </section>
 
+    <div class="simple-separator"></div>
+
     <section id="goals-page">
         <h2>Our Goals</h2>
         <p>Our goal is to provide a robust, user-centric platform that facilitates easy and secure interactions between patients and medical professionals. We are dedicated to creating an environment where patients can access quality healthcare effortlessly, regardless of their location or financial situation. By leveraging advanced technology, we aim to remove the barriers to medical consultations, ensuring that everyone has the opportunity to receive timely, reliable, and affordable healthcare. We strive to connect patients with genuine, qualified doctors who are passionate about using their medical expertise to serve others. Our platform is designed to ensure that every interaction is safe, confidential, and tailored to the patient's needs. Whether it's offering virtual consultations for those in remote areas, providing affordable options for patients who cannot afford high consultation fees, or ensuring access to specialized care, our focus is on making healthcare more inclusive and accessible.</p>
     </section>
+
+    <div class="simple-separator"></div>
 
     <section id="about-page">
         <h2>About Us</h2>
@@ -357,6 +453,44 @@
     });
 </script>
 
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <div class="footer-logo">
+                <img src="/assets/logo.png" alt="Logo">
+                <h3>Doctor-Patient Interface</h3>
+            </div>
+            <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+        </div>
+        
+        <div class="footer-section">
+            <h4>Contact Us</h4>
+            <p>Email: doctorpatientinterface@gmail.com</p>
+            <p>Phone: 9901527481</p>
+            <p>Address:  Shavige Malleshwara Hills, 91st Main Rd,
+            <br>  1st Stage, Kumaraswamy Layout,</p>
+            <p> Bengaluru, Karnataka 560078</p>
+        </div>
+        
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <p><a href="#mission-page" style="color: #999; text-decoration: none;">Our Mission</a></p>
+            <p><a href="#goals-page" style="color: #999; text-decoration: none;">Our Goals</a></p>
+            <p><a href="#about-page" style="color: #999; text-decoration: none;">About Us</a></p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+        <p>Developed By Team DPI</p>
+    </div>
+</footer>
+    
 </body>
 
 </html>

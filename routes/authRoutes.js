@@ -27,7 +27,21 @@ router.post('/debug-reset-password', authController.debugResetPassword);
 
 
 // OTP Routes
-router.post("/verify-otp", authController.verifyOTP);
+router.post("/verify-otp", async (req, res) => {
+  try {
+      const { otp, email } = req.body;
+      console.log("📥 Received OTP verification request:", { email, otpLength: otp.length });
+
+      // Call the controller with clear logging
+      await authController.verifyOTP(req, res);
+  } catch (error) {
+      console.error("❌ OTP Verification Route Error:", error);
+      res.status(500).json({
+          success: false,
+          message: "OTP verification failed"
+      });
+  }
+});
 router.post("/resend-otp", authController.resendOTP);
 
 // Password Reset Routes
@@ -35,7 +49,8 @@ router.post("/forgot-password", authController.forgotPassword);
 router.post("/reset-password", authController.resetPassword);
 
 // Protected Admin Routes
-router.delete("/delete-user", authenticateUser, authorizeRole(["admin"]), authController.deleteUser);
+// Add this to your existing routes
+router.delete('/delete-user', authController.deleteUser);
 
 // View Routes
 router.get("/login", (req, res) => res.render("login"));

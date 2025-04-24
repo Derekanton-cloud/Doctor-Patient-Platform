@@ -13,8 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
         otpInput: document.getElementById("otp-input"),
         resendOTPBtn: document.getElementById("resend-otp"),
         verifyOTPBtn: document.getElementById("verify-otp"),
+        otpInputs: document.querySelectorAll('.otp-inputs input'),
+        otpTimer: document.getElementById('otp-timer'),
+        otpCountdown: document.getElementById('countdown'),
+        otpEmail: document.getElementById('otp-email'),
+        otpOverlay: document.getElementById('overlay')
     };
-    let otpTimer, otpTimeLeft = 60;
+    let otpTimer, otpTimeLeft = 30;
 
     elements.roleSelect.addEventListener("change", toggleRoleFields);
     document.querySelectorAll("input, select").forEach(input => input.addEventListener("input", validateForm));
@@ -95,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json(); // Parse the response JSON
     
             if (data.success) {
-                showOTPModal();
+                showOTPModal(email);
                 startOTPTimer();
             } else {
                 alert(data.message || "Registration failed.");
@@ -107,62 +112,130 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
-    function showOTPModal() {
-        // Blur the registration page
-        document.querySelector(".container").style.filter = "blur(0px)";
-    
-        // Show the overlay
-        document.getElementById("overlay").style.display = "block";
-    
-        // Show the OTP modal
-        document.getElementById("otp-section").classList.remove("hidden");
+    function showOTPModal(email) {
+        // Initialize OTP modal with email
+        elements.otpEmail.textContent = email;
+        elements.otpSection.classList.remove('hidden');
+        elements.otpOverlay.style.display = 'block';
+        elements.otpTimer.style.width = '100%';
+
+        // Setup OTP input handling
+        setupOTPInputs();
+        startOTPTimer();
+    }
+
+    function setupOTPInputs() {
+        elements.otpInputs.forEach((input, index) => {
+            input.value = ''; // Clear previous values
+            
+            input.addEventListener('keyup', (e) => {
+                if (e.key >= 0 && e.key <= 9) {
+                    if (index < elements.otpInputs.length - 1) {
+                        elements.otpInputs[index + 1].focus();
+                    }
+                    validateOTPInput();
+                } else if (e.key === 'Backspace') {
+                    if (index > 0) {
+                        elements.otpInputs[index - 1].focus();
+                    }
+                }
+            });
+
+            input.addEventListener('paste', handleOTPPaste);
+        });
+    }
+
+    function handleOTPPaste(e) {
+        e.preventDefault();
+        const pasteData = e.clipboardData.getData('text').slice(0, 6);
+        elements.otpInputs.forEach((input, index) => {
+            if (index < pasteData.length) {
+                input.value = pasteData[index];
+            }
+        });
+        validateOTPInput();
     }
 
     function startOTPTimer() {
-        otpTimeLeft = 60;
-        elements.resendOTPBtn.disabled = true;
-        elements.resendOTPBtn.textContent = `Resend OTP in ${otpTimeLeft}s`;
+        otpTimeLeft = 30;
+        elements.resendOTPBtn.classList.add('disabled');
+        
+        if (otpTimer) clearInterval(otpTimer);
+        
         otpTimer = setInterval(() => {
             otpTimeLeft--;
-            elements.resendOTPBtn.textContent = `Resend OTP in ${otpTimeLeft}s`;
+            elements.otpCountdown.textContent = otpTimeLeft;
+            elements.otpTimer.style.width = `${(otpTimeLeft/30) * 100}%`;
+
             if (otpTimeLeft <= 0) {
                 clearInterval(otpTimer);
-                elements.resendOTPBtn.disabled = false;
-                elements.resendOTPBtn.textContent = "Resend OTP";
+                elements.resendOTPBtn.classList.remove('disabled');
+                document.getElementById('timer').style.display = 'none';
             }
         }, 1000);
     }
 
+    function validateOTPInput() {
+        const otp = Array.from(elements.otpInputs)
+            .map(input => input.value)
+            .join('');
+        elements.verifyOTPBtn.disabled = otp.length !== 6;
+        return otp;
+    }
     // Ensure the otpInput element is correctly selected
 const otpInput = document.getElementById("otp");
 
 async function verifyOTP() {
-  const otp = otpInput?.value.trim(); // Use optional chaining to avoid null errors
-  if (!otp) return alert("Please enter the OTP.");
+    const otp = validateOTPInput();
+    const email = elements.emailField.value;
+    
+    console.log('Attempting OTP verification:', { email, otpLength: otp?.length });
 
-  try {
-    const response = await fetch("/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: elements.emailField.value, otp }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-        alert(elements.roleSelect.value === "patient" ? "Successfully registered!" : "Application sent: Waiting for approval.");
-        window.location.href = "/login"; // Redirect to login page after successful registration
-        document.querySelector(".container").style.filter = "none";
-        document.getElementById("overlay").classList.add("hidden");
-        document.getElementById("otp-section").classList.add("hidden");
-        if (elements.roleSelect.value === "doctor") sendDoctorDetailsToAdmins(data.doctor);
-    } else {
-      alert(data.message || "OTP verification failed.");
+    if (!otp || otp.length !== 6) {
+        alert('Please enter the complete 6-digit OTP');
+        return;
     }
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    alert("An error occurred while verifying OTP. Please try again.");
-  }
+
+    try {
+        const response = await fetch("/auth/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: elements.emailField.value, otp }),
+        });
+    
+        const data = await response.json();
+
+        console.log('OTP verification response status:', response.status);
+        
+        console.log('OTP verification response:', data);
+
+        if (data.success) {
+            // First handle doctor notifications if needed
+            if (elements.roleSelect.value === "doctor") {
+                sendDoctorDetailsToAdmins(data.doctor);
+
+            }
+
+            // Clean up UI
+            elements.otpOverlay.style.display = "none";
+            elements.otpSection.classList.add("hidden");
+            document.querySelector(".container").style.filter = "none";
+
+            // Show success message and redirect
+            const message = elements.roleSelect.value === "patient" 
+                ? "Successfully registered!" 
+                : "Application sent: Waiting for approval.";
+                
+            alert(message);
+            window.location.replace("/login");
+        } else {
+            console.error('OTP verification failed:', data.message);
+            alert(data.message || "OTP verification failed. Please try again.");
+        }
+    } catch (error) {
+        console.error("Error during OTP verification:", error);
+        alert("An error occurred while verifying OTP. Please try again.");
+    }
 }
 
     function sendDoctorDetailsToAdmins(doctor) {
@@ -171,6 +244,13 @@ async function verifyOTP() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ doctor })
         });
+    }
+
+    function showSuccessMessage(role) {
+        const message = role === "patient" 
+            ? "Registration successful!" 
+            : "Application submitted successfully! Awaiting admin approval.";
+        alert(message);
     }
 
     async function checkUserExists(email) {
