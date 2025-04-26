@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const OTP = require("../models/otp");
 const sendOTP = require("../utils/sendOtp");
+const { hashPassword } = require('../utils/passwordUtils'); // Import the utility
+const { verifyPassword } = require('../utils/passwordUtils'); // Import the utility
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -87,9 +89,6 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "User already exists." });
     }
 
-    // Hash Password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create User Object
     const user = new User({
       role,
@@ -101,7 +100,7 @@ exports.registerUser = async (req, res) => {
       phone,
       emergencyContact,
       languages,
-      password: hashedPassword,
+      password,
       isVerified: false, // Initial status
     });
 
@@ -156,18 +155,18 @@ exports.verifyOTP = async (req, res) => {
       return res.status(400).json({ error: "Invalid OTP format. Must be 6 digits." });
     }
 
-    const otpRecord = await OTP.findOne({ 
+    const otpRecord = await OTP.findOne({
       email,
       expiresAt: { $gt: new Date() }
-  });
+    });
 
-  if (!otpRecord) {
-    console.log("❌ No valid OTP found for:", email);
-    return res.status(400).json({
+    if (!otpRecord) {
+      console.log("❌ No valid OTP found for:", email);
+      return res.status(400).json({
         success: false,
         message: "OTP expired or not found"
-    });
-}
+      });
+    }
     // Check if OTP is expired
     if (Date.now() > otpRecord.expiresAt) {
       await OTP.deleteOne({ email }); // Remove expired OTP
@@ -240,26 +239,26 @@ Current Working Hospital/Clinic: ${user.currentWorkingHospital || "Not provided"
 exports.loginUser = async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    console.log("👤 Login attempt details:", { 
-      email, 
-      role, 
+    console.log("👤 Login attempt details:", {
+      email,
+      role,
       hasPassword: !!password,
-      passwordLength: password?.length 
+      passwordLength: password?.length
     });
 
     // Validate input
     if (!email || !password || !role) {
-      console.log("❌ Missing fields:", { 
-        hasEmail: !!email, 
-        hasPassword: !!password, 
-        hasRole: !!role 
+      console.log("❌ Missing fields:", {
+        hasEmail: !!email,
+        hasPassword: !!password,
+        hasRole: !!role
       });
       return res.status(400).json({ error: "Please provide email, password and role" });
     }
 
     // Check if the user exists in the database
     const user = await User.findOne({ email }).select('+password'); // Explicitly select password field
-    console.log("🔍 Database search result:", { 
+    console.log("🔍 Database search result:", {
       userFound: !!user,
       userRole: user?.role,
       hasPasswordHash: !!user?.password
@@ -271,12 +270,12 @@ exports.loginUser = async (req, res) => {
     }
 
     // Check if the role matches
-    console.log("🔍 Role check:", { 
-      requestedRole: role, 
+    console.log("🔍 Role check:", {
+      requestedRole: role,
       userRole: user.role,
-      matches: role === user.role 
+      matches: role === user.role
     });
-    
+
     if (user.role !== role) {
       console.log("❌ Role mismatch for user:", email);
       return res.status(400).json({ error: "Please select the correct role for your account" });
@@ -289,14 +288,15 @@ exports.loginUser = async (req, res) => {
       passwordFieldExists: 'password' in user,
       passwordLength: user.password?.length
     });
-    
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    const isPasswordValid = await verifyPassword(password, user.password);
     console.log("🔍 Password validation result:", isPasswordValid);
 
     if (!isPasswordValid) {
       console.log("❌ Invalid password for user:", email);
       return res.status(400).json({ error: "Invalid credentials" });
     }
+    console.log("✅ Password validation successful");
 
     // Check verification status
     console.log("🔍 User verification status:", user.isVerified);
@@ -305,12 +305,12 @@ exports.loginUser = async (req, res) => {
       const { hashedOTP, otpExpiry } = await sendOTP(email);
       await OTP.updateOne(
         { email },
-        { 
-          $set: { 
-            otp: hashedOTP, 
+        {
+          $set: {
+            otp: hashedOTP,
             expiresAt: otpExpiry,
-            attempts: 0 
-          } 
+            attempts: 0
+          }
         },
         { upsert: true }
       );
@@ -338,7 +338,7 @@ exports.loginUser = async (req, res) => {
     // Generate token and prepare response
     const token = generateToken(user);
     req.session.userId = user._id;
-    console.log("✅ Session created:", { 
+    console.log("✅ Session created:", {
       userId: req.session.userId,
       sessionExists: !!req.session
     });
@@ -379,7 +379,7 @@ exports.loginUser = async (req, res) => {
 exports.debugResetPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
-    
+
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
@@ -388,15 +388,15 @@ exports.debugResetPassword = async (req, res) => {
 
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
+
     // Update password
     await User.updateOne(
-      { email }, 
-      { 
-        $set: { 
+      { email },
+      {
+        $set: {
           password: hashedPassword,
           isVerified: true // Ensure user is verified
-        } 
+        }
       }
     );
 
@@ -434,22 +434,22 @@ exports.resendOTP = async (req, res) => {
 
     // Generate and send new OTP
     const { hashedOTP, otpExpiry } = await sendOTP(email);
-    
+
     // Update or create OTP record
     await OTP.updateOne(
-      { email }, 
-      { 
-        $set: { 
-          otp: hashedOTP, 
+      { email },
+      {
+        $set: {
+          otp: hashedOTP,
           expiresAt: otpExpiry,
           attempts: 0 // Reset attempts counter
-        } 
-      }, 
+        }
+      },
       { upsert: true }
     );
 
     console.log(`✉️ New OTP sent to ${email}`);
-    res.status(200).json({ 
+    res.status(200).json({
       success: true,
       message: "New OTP sent to email.",
       expiresIn: Math.ceil((otpExpiry - Date.now()) / 1000) // seconds until expiry
@@ -457,9 +457,9 @@ exports.resendOTP = async (req, res) => {
 
   } catch (err) {
     console.error("❌ Resend OTP Error:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      error: "Failed to resend OTP. Please try again later." 
+      error: "Failed to resend OTP. Please try again later."
     });
   }
 };
@@ -514,28 +514,28 @@ exports.resetPassword = async (req, res) => {
 // Delete User
 exports.deleteUser = async (req, res) => {
   try {
-      const { email } = req.body;
-      
-      // Find and delete user
-      const result = await User.findOneAndDelete({ email });
-      
-      if (!result) {
-          return res.status(404).json({
-              success: false,
-              message: "User not found"
-          });
-      }
+    const { email } = req.body;
 
-      console.log(`✅ User deleted: ${email}`);
-      res.status(200).json({
-          success: true,
-          message: "User successfully deleted"
+    // Find and delete user
+    const result = await User.findOneAndDelete({ email });
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
       });
+    }
+
+    console.log(`✅ User deleted: ${email}`);
+    res.status(200).json({
+      success: true,
+      message: "User successfully deleted"
+    });
   } catch (error) {
-      console.error("❌ Delete user error:", error);
-      res.status(500).json({
-          success: false,
-          message: "Failed to delete user"
-      });
+    console.error("❌ Delete user error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete user"
+    });
   }
 };

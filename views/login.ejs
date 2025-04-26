@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Doctor-Patient Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* Global Styles */
         body {
@@ -13,18 +14,116 @@
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #abdded, #92e1e9);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            min-height: 100vh;
+            margin-left: -110px;
+            margin-bottom: -40px;
+            margin-top: 10px;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: #fff;
+            padding: 30px 145px;
+            position: relative;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: auto;
+        }
+
+        .footer-logo h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        .footer-section h4 {
+            color: #a4d2ff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p {
+            margin: 5px 0;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .footer-section .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #a4d2ff;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #666;
+            font-size: 0.9rem;
         }
 
         /* Navbar */
         .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             width: 100%;
-            background-color: #000; /* Black navbar */
+            background-color: #000;
             padding: 10px 20px;
             display: flex;
             align-items: center;
@@ -39,7 +138,8 @@
         }
 
         .navbar-logo img {
-            height: 50px; /* Logo image size */
+            height: 50px;
+            /* Logo image size */
             margin-right: 15px;
         }
 
@@ -51,29 +151,32 @@
         }
 
         .navbar-logo:hover span {
-            color: #a4d2ff; /* Beautiful Dodger Blue */
-            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7); /* Blue Glow */
+            color: #a4d2ff;
+            /* Beautiful Dodger Blue */
+            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
+            /* Blue Glow */
         }
 
         /* Form Container */
         .container {
             display: flex;
-            width: 90%;
-            max-width: 1200px;
+            width: 110%;
+            max-width: 2800px;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            margin-top: 10px; /* Push form below navbar */
+            margin-top: 10px;
+            min-height: 600px;
         }
 
         /* Left Side - Doctor Image */
         .image-section {
-            flex: 1;
+            flex: 0.3;
             background: linear-gradient(135deg, #22bfc7, #84b0fb);
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer; /* Makes image clickable */
+            cursor: pointer;
         }
 
         .image-section img {
@@ -81,16 +184,19 @@
             object-fit: cover;
             transform: translateY(20px);
             transition: transform 0.4s ease;
-            
+
         }
 
         /* Right Side - Login Form */
         .form-section {
-            flex: 1;
-            padding: 60px;
+            flex: 2.7;
+            padding: 40px 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            width: 100%;
+            max-width: none;
+            margin: 0;
         }
 
         .form-section h2 {
@@ -101,7 +207,11 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .form-group label {
@@ -114,11 +224,13 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 16px 20px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
             transition: box-shadow 0.3s, transform 0.3s;
+            min-width: unset;
+            box-sizing: border-box;
         }
 
         .form-group input:focus,
@@ -179,112 +291,142 @@
         .center-link a:hover {
             color: #004e92;
         }
-        
-            /* Status Messages */
-            .status-container {
-                margin: 15px 0;
-                padding: 10px;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
+
+        /* Status Messages */
+        .status-container {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .error-message,
+        .success-message {
+            display: none;
+            padding: 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+            flex: 1;
+        }
+
+        .error-message {
+            background-color: #fde8e8;
+            color: #dc3545;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #28a745;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
-        
-            .error-message, .success-message {
-                display: none;
-                padding: 10px;
-                border-radius: 4px;
-                margin-left: 10px;
-                flex: 1;
-            }
-        
-            .error-message {
-                background-color: #fde8e8;
-                color: #dc3545;
-            }
-        
-            .success-message {
-                background-color: #d4edda;
-                color: #28a745;
-            }
-        
-            /* Loading Spinner */
-            .loading-spinner {
-                display: none;
-                width: 20px;
-                height: 20px;
-                border: 2px solid #ffffff;
-                border-radius: 50%;
-                border-top-color: transparent;
-                animation: spin 0.8s linear infinite;
-                margin-left: 10px;
-            }
-        
-            @keyframes spin {
-                to { transform: rotate(360deg); }
-            }
-        
-            /* OTP Modal */
-            .modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-            }
-        
-            .modal-content {
-                background: white;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-                width: 90%;
-                max-width: 400px;
-            }
-        
-            .otp-inputs {
-                display: flex;
-                gap: 10px;
-                justify-content: center;
-                margin: 20px 0;
-            }
-        
-            .otp-inputs input {
-                width: 40px;
-                height: 40px;
-                text-align: center;
-                font-size: 18px;
-                border: 2px solid #ddd;
-                border-radius: 8px;
-            }
-        
-            .otp-inputs input:focus {
-                border-color: #047cde;
-                box-shadow: 0 0 5px rgba(4, 124, 222, 0.3);
-            }
-        
-            .otp-footer {
-                text-align: center;
-                margin-top: 20px;
-            }
-        
-            .hidden {
-                display: none;
-            }
+        }
+
+        /* OTP Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-inputs input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .otp-inputs input:focus {
+            border-color: #047cde;
+            box-shadow: 0 0 5px rgba(4, 124, 222, 0.3);
+        }
+
+        .otp-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
 
         /* Responsive Design */
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .container {
-                flex-direction: column;
                 width: 95%;
             }
 
             .image-section {
-                display: none; /* Hide image on small screens */
+                display: none;
+                /* Hide image on small screens */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .form-section {
+                padding: 40px 60px;
+                /* Adjust padding for mobile */
+            }
+
+            .form-group input,
+            .form-group select {
+                min-width: 100%;
+                /* Full width on mobile */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .form-section {
+                padding: 30px 40px;
+            }
+
+            .image-section {
+                display: none;
             }
         }
     </style>
@@ -299,105 +441,124 @@
             <span>Doctor-Patient Interface</span>
         </div>
     </div>
-
-    <div class="container">
-        <!-- Left: Doctor Image (Clickable to Go to Index Page) -->
-        <div class="image-section" onclick="location.href='/'">
-            <img src="/assets/doctor-model1.jpg" alt="Doctor Image">
-        </div>
-
-        <!-- Right: Login Form -->
-        <div class="form-section">
-            <h2>Welcome Back!</h2>
-            <form id="login-form" action="/auth/login" method="POST">
-                <!-- Role Selector -->
-                <div class="form-group">
-                    <label for="role">Select Your Role:</label>
-                    <select id="role" name="role" required>
-                        <option value="" disabled selected>Your Role</option>
-                        <option value="doctor">Doctor</option>
-                        <option value="patient">Patient</option>
-                    </select>
+    <div class="main-content">
+        <section id="login-section">
+            <div class="container">
+                <!-- Left: Doctor Image (Clickable to Go to Index Page) -->
+                <div class="image-section" onclick="location.href='/'">
+                    <img src="/assets/doctor-model1.jpg" alt="Doctor Image">
                 </div>
 
-                <!-- Status Messages -->
-                <div class="status-container">
-                    <i id="status-icon"></i>
-                    <div id="error-msg" class="error-message"></div>
-                    <div id="success-msg" class="success-message"></div>
-                </div>
-
-                <!-- Email -->
-                <div class="form-group">
-                    <label for="email">Email Address:</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
-                </div>
-
-                <!-- Password -->
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
-                </div>
-
-                <!-- Forgot Password (Above Login Button) -->
-                <div class="links">
-                    <a href="/auth/forgotPassword">Forgot Password?</a>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn">
-                    <span class="btn-text">Login</span>
-                    <span class="loading-spinner"></span>
-                </button>
-
-                <!-- Sign Up Link -->
-                <div class="center-link">
-                    <span>Don't have an account? </span><a href="/register">Sign Up</a>
-                </div>
-            </form>
-
-            <!-- OTP Verification Modal -->
-            <div id="otp-section" class="modal hidden">
-                <div class="modal-content">
-                    <h3>Enter Verification Code</h3>
-                    <p>We've sent a verification code to your email</p>
-                    
-                    <form id="otp-form">
-                        <div class="otp-inputs">
-                            <input type="text" maxlength="1" pattern="[0-9]" required>
-                            <input type="text" maxlength="1" pattern="[0-9]" required>
-                            <input type="text" maxlength="1" pattern="[0-9]" required>
-                            <input type="text" maxlength="1" pattern="[0-9]" required>
-                            <input type="text" maxlength="1" pattern="[0-9]" required>
-                            <input type="text" maxlength="1" pattern="[0-9]" required>
+                <!-- Right: Login Form -->
+                <div class="form-section">
+                    <h2>Welcome Back!</h2>
+                    <form id="login-form" action="/auth/login" method="POST">
+                        <!-- Role Selector -->
+                        <div class="form-group">
+                            <label for="role">Select Your Role:</label>
+                            <select id="role" name="role" required>
+                                <option value="" disabled selected>Your Role</option>
+                                <option value="doctor">Doctor</option>
+                                <option value="patient">Patient</option>
+                            </select>
                         </div>
-                        <button type="submit" class="btn">Verify</button>
+
+                        <!-- Status Messages -->
+                        <div class="status-container">
+                            <i id="status-icon"></i>
+                            <div id="error-msg" class="error-message"></div>
+                            <div id="success-msg" class="success-message"></div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email Address:</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email"
+                                autocomplete="email" required>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                autocomplete="current-password" required>
+                        </div>
+
+                        <!-- Forgot Password (Above Login Button) -->
+                        <div class="links">
+                            <a href="/auth/forgotPassword">Forgot Password?</a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn">
+                            <span class="btn-text">Login</span>
+                            <span class="loading-spinner"></span>
+                        </button>
+
+                        <!-- Sign Up Link -->
+                        <div class="center-link">
+                            <span>Don't have an account? </span><a href="/register">Sign Up</a>
+                        </div>
                     </form>
-                    
-                    <div class="otp-footer">
-                        <p>Didn't receive code? <a href="#" id="resend-otp">Resend</a></p>
-                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="/assets/logo.png" alt="Logo">
+                    <h3>Doctor-Patient Interface</h3>
+                </div>
+                <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: doctorpatientinterface@gmail.com</p>
+                <p>Phone: 9901527481</p>
+                <p>Address: Shavige Malleshwara Hills, 91st Main Rd,
+                    <br> 1st Stage, Kumaraswamy Layout,
+                </p>
+                <p>Bengaluru, Karnataka 560078</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <p><a href="/" style="color: #999; text-decoration: none;">Home</a></p>
+                <p><a href="/register" style="color: #999; text-decoration: none;">Register</a></p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+            <p>Developed By Team DPI</p>
+        </div>
+    </footer>
 
 
     <script src="/js/login.js"></script> <!-- Link to Login Script -->
 
     <script>
-    // Admin Login Trigger on Logo Tap
-    let tapCount = 0;
-    const logo = document.getElementById('logo');
+        // Admin Login Trigger on Logo Tap
+        let tapCount = 0;
+        const logo = document.getElementById('logo');
 
-    logo.addEventListener('click', () => {
-        tapCount++;
-        if (tapCount === 5) {
-            window.location.href = '/adminDashboard'; // Redirect to admin login
-        }
-        setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
-    });
-</script>
+        logo.addEventListener('click', () => {
+            tapCount++;
+            if (tapCount === 5) {
+                window.location.href = '/adminDashboard'; // Redirect to admin login
+            }
+            setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
+        });
+    </script>
 </body>
 
 </html>

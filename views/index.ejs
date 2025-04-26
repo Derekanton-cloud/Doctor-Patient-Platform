@@ -20,7 +20,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 25px 20px;
+            padding: 15px 20px;
             background: linear-gradient(135deg, #000000, #1a1a1a);
             color: whitesmoke;
             position: sticky;
@@ -61,7 +61,7 @@
             /* Centering the links */
             gap: 50px;
             margin-left: -240px;
-            margin-bottom: -40px;
+            margin-bottom: -30px;
         }
 
         .navbar-links a {
@@ -91,7 +91,7 @@
             gap: 5px;
             cursor: pointer;
             z-index: 1500;
-            margin-bottom: -40px;
+            margin-bottom: -30px;
             margin-right: 20px;
         }
 
@@ -283,6 +283,35 @@
             box-shadow: none;
         }
 
+        /* Add these styles */
+        #mission-page,
+        #goals-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        #mission-page h2,
+        #goals-page h2 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #1E90FF, #4682B4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #mission-page p,
+        #goals-page p {
+            font-size: 1.2rem;
+            color: #444;
+            padding: 0 8rem;
+            line-height: 2;
+            text-align: justify;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
 
         #mission-page,
         #goals-page,
@@ -326,11 +355,27 @@
             padding: 2rem;
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
         }
 
         .admin-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            background-color: #000;
+            color: #fff;
+        }
+
+        .admin-card:hover h3,
+        .admin-card:hover p {
+            color: #fff;
+        }
+
+        .admin-card:hover .admin-social a {
+            color: #fff;
+        }
+
+        .admin-card:hover .admin-social a:hover {
+            color: #1E90FF;
         }
 
         .admin-card img {
@@ -347,11 +392,32 @@
             color: #555555;
         }
 
+        .admin-social {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .admin-social a {
+            color: #666;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .admin-social a:hover {
+            color: #1E90FF;
+        }
+
+        .admin-card {
+            padding: 1.5rem;
+        }
+
 
         .footer {
             background: linear-gradient(135deg, #000000, #1a1a1a);
             color: #fff;
-            padding: 50px 0;
+            padding: 30px 0;
             position: relative;
             margin-top: 50px;
         }
@@ -439,6 +505,8 @@
         #features-page {
             flex-direction: column;
             justify-content: center;
+            padding: 2rem;
+            min-height: 90vh;
             text-align: center;
             background: linear-gradient(135deg, #abdded, #92e1e9);
         }
@@ -446,24 +514,36 @@
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 2rem;
-            padding: 0 1.2rem;
-            max-width: 1700px; 
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding: 0 3rem;
+            max-width: 1700px;
         }
 
         .feature-card {
             background: white;
-            padding: 2.5rem 2rem;
+            padding: 1.8rem 1.5rem;
             border-radius: 20px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
             text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s, color 0.3s;
         }
 
         .feature-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            background-color: #000;
+            color: #fff;
+        }
+
+        .feature-card:hover h3,
+        .feature-card:hover p {
+            color: #fff;
+        }
+
+        .feature-card:hover .feature-icon {
+            color: #1E90FF;
         }
 
         .feature-icon {
@@ -474,14 +554,26 @@
 
         .feature-card h3 {
             color: #333;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin-bottom: 1rem;
         }
 
         .feature-card p {
             color: #666;
-            line-height: 1.6;
-            font-size: 1.1rem;
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+
+        .section-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+            will-change: opacity, transform;
+        }
+
+        .section-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 
@@ -516,7 +608,7 @@
         <a href="/auth/register" class="menu-item">Register</a>
     </div>
 
-    <section id="main-page">
+    <section id="main-page" class="section-animate">
         <div class="content">
             <h1>Your Health, Our Priority!</h1>
             <p>Your health, your way—easily schedule appointments, consult with doctors online, and receive
@@ -547,7 +639,7 @@
 
     <div class="simple-separator"></div>
 
-    <section id="mission-page">
+    <section id="mission-page" class="section-animate">
         <h2>Our Mission</h2>
         <p>Our mission is to revolutionize healthcare by seamlessly connecting patients and healthcare providers through
             innovative technology. Our mission is to revolutionize healthcare by bridging the gap between patients and
@@ -566,7 +658,7 @@
 
     <div class="simple-separator"></div>
 
-    <section id="features-page">
+    <section id="features-page" class="section-animate">
         <h2>Our Features</h2>
         <div class="features-grid">
             <div class="feature-card">
@@ -598,182 +690,233 @@
 
             <div class="feature-card">
                 <div class="feature-icon">
-                <i class="fas fa-user-md"></i>
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3>Verified Doctors</h3>
+                <p>Consult with thoroughly verified and qualified healthcare professionals. We ensure all doctors are
+                    licensed and experienced.</p>
             </div>
-            <h3>Verified Doctors</h3>
-            <p>Consult with thoroughly verified and qualified healthcare professionals. We ensure all doctors are
-                licensed and experienced.</p>
-        </div>
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-lock"></i>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Secure Platform</h3>
+                <p>Your health data is protected with enterprise-grade security. We maintain strict privacy standards
+                    and
+                    data encryption.</p>
             </div>
-            <h3>Secure Platform</h3>
-            <p>Your health data is protected with enterprise-grade security. We maintain strict privacy standards and
-                data encryption.</p>
-        </div>
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-mobile-alt"></i>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>24/7 Accessibility</h3>
+                <p>Access healthcare services round the clock. Our platform is available 24/7 for your medical needs.
+                </p>
             </div>
-            <h3>24/7 Accessibility</h3>
-            <p>Access healthcare services round the clock. Our platform is available 24/7 for your medical needs.</p>
-        </div>
     </section>
 
 
-        <div class="simple-separator"></div>
+    <div class="simple-separator"></div>
 
-        <section id="goals-page">
-            <h2>Our Goals</h2>
-            <p>Our goal is to provide a robust, user-centric platform that facilitates easy and secure interactions
-                between
-                patients and medical professionals. We are dedicated to creating an environment where patients can
-                access
-                quality healthcare effortlessly, regardless of their location or financial situation. By leveraging
-                advanced
-                technology, we aim to remove the barriers to medical consultations, ensuring that everyone has the
-                opportunity to receive timely, reliable, and affordable healthcare. We strive to connect patients with
-                genuine, qualified doctors who are passionate about using their medical expertise to serve others. Our
-                platform is designed to ensure that every interaction is safe, confidential, and tailored to the
-                patient's
-                needs. Whether it's offering virtual consultations for those in remote areas, providing affordable
-                options
-                for patients who cannot afford high consultation fees, or ensuring access to specialized care, our focus
-                is
-                on making healthcare more inclusive and accessible.</p>
-        </section>
+    <section id="goals-page" class="section-animate">
+        <h2>Our Goals</h2>
+        <p>Our goal is to provide a robust, user-centric platform that facilitates easy and secure interactions
+            between
+            patients and medical professionals. We are dedicated to creating an environment where patients can
+            access
+            quality healthcare effortlessly, regardless of their location or financial situation. By leveraging
+            advanced
+            technology, we aim to remove the barriers to medical consultations, ensuring that everyone has the
+            opportunity to receive timely, reliable, and affordable healthcare. We strive to connect patients with
+            genuine, qualified doctors who are passionate about using their medical expertise to serve others. Our
+            platform is designed to ensure that every interaction is safe, confidential, and tailored to the
+            patient's
+            needs. Whether it's offering virtual consultations for those in remote areas, providing affordable
+            options
+            for patients who cannot afford high consultation fees, or ensuring access to specialized care, our focus
+            is
+            on making healthcare more inclusive and accessible.</p>
+    </section>
 
-        <div class="simple-separator"></div>
+    <div class="simple-separator"></div>
 
-        <section id="about-page">
-            <h2>About Us</h2>
-            <div class="admin-grid">
-                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
-                    <h3>AMRUTHA BHAT</h3>
-                    <p>"Connecting Patients with Trusted Doctors."</p>
-                </div>
-                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
-                    <h3>HANSINI M N</h3>
-                    <p>"Quality Care, Anytime, Anywhere."</p>
-                </div>
-                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
-                    <h3>CHANDRASHEKAR G V</h3>
-                    <p>"Accessible Healthcare for Everyone."</p>
-                </div>
-                <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
-                    <h3>DEREK ANTON</h3>
-                    <p>"Your Health, Our Mission."</p>
+    <section id="about-page" class="section-animate">
+        <h2>About Us</h2>
+        <div class="admin-grid">
+            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                <h3>AMRUTHA BHAT</h3>
+                <p>"Connecting Patients with Trusted Doctors."</p>
+                <div class="admin-social">
+                    <a href="https://www.instagram.com/amrutha_bhat07/" target="_blank"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="https://github.com/Amruthabhat07" target="_blank"><i class="fab fa-github"></i></a>
                 </div>
             </div>
-        </section>
-
-        <script>
-            // Admin Login Trigger on Logo Tap
-            let tapCount = 0;
-            const logo = document.getElementById('logo');
-
-            logo.addEventListener('click', () => {
-                tapCount++;
-                if (tapCount === 5) {
-                    window.location.href = '/adminDashboard'; // Redirect to admin login
-                }
-                setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
-            });
-
-            function toggleMenu() {
-                const menu = document.getElementById('menu');
-                menu.classList.toggle('open');
-            }
-
-            document.addEventListener('click', function (event) {
-                const menu = document.getElementById('menu');
-                const hamburger = document.querySelector('.hamburger-menu');
-
-                // Close the menu if clicked outside of it and the hamburger menu
-                if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
-                    menu.classList.remove('open');
-                }
-            });
-        </script>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="/assets/logo.png" alt="Logo">
-                        <h3>Doctor-Patient Interface</h3>
-                    </div>
-                    <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Contact Us</h4>
-                    <p>Email: doctorpatientinterface@gmail.com</p>
-                    <p>Phone: 9901527481</p>
-                    <p>Address: Shavige Malleshwara Hills, 91st Main Rd,
-                        <br> 1st Stage, Kumaraswamy Layout,
-                    </p>
-                    <p> Bengaluru, Karnataka 560078</p>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <p><a href="#mission-page" style="color: #999; text-decoration: none;">Our Mission</a></p>
-                    <p><a href="#features-page" style="color: #999; text-decoration: none;">Features</a></p>
-                    <p><a href="#goals-page" style="color: #999; text-decoration: none;">Our Goals</a></p>
-                    <p><a href="#about-page" style="color: #999; text-decoration: none;">About Us</a></p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
+            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                <h3>HANSINI M N</h3>
+                <p>"Quality Care, Anytime, Anywhere."</p>
+                <div class="admin-social">
+                    <a href="https://www.instagram.com/hansini.mn/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://github.com/hansini923" target="_blank"><i class="fab fa-github"></i></a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
-                <p>Developed By Team DPI</p>
+            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                <h3>CHANDRASHEKAR G V</h3>
+                <p>"Accessible Healthcare for Everyone."</p>
+                <div class="admin-social">
+                    <a href="https://www.instagram.com/chandu_008_/" target="_blank"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="https://github.com/chandrashekargv" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
             </div>
-        </footer>
+            <div class="admin-card"><img src="/assets/no-pfp.jpg" alt="Admin">
+                <h3>DEREK ANTON</h3>
+                <p>"Your Health, Our Mission."</p>
+                <div class="admin-social">
+                    <a href="https://www.instagram.com/derekantonn/" target="_blank"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="https://github.com/Derekanton-cloud" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <script>
-            // Image slider functionality
-            const slider = document.querySelector('.slider');
-            const dots = document.querySelectorAll('.dot');
-            let currentSlide = 0;
-            const slideCount = document.querySelectorAll('.slide').length;
+    <script>
+        // Admin Login Trigger on Logo Tap
+        let tapCount = 0;
+        const logo = document.getElementById('logo');
 
-            function updateSlider() {
-                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-                // Update dots
-                dots.forEach((dot, index) => {
-                    dot.classList.toggle('active', index === currentSlide);
-                });
+        logo.addEventListener('click', () => {
+            tapCount++;
+            if (tapCount === 5) {
+                window.location.href = '/adminDashboard'; // Redirect to admin login
             }
+            setTimeout(() => tapCount = 0, 3000); // Reset tap count after 3 seconds
+        });
 
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % slideCount;
-                updateSlider();
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('open');
+        }
+
+        document.addEventListener('click', function (event) {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger-menu');
+
+            // Close the menu if clicked outside of it and the hamburger menu
+            if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
+                menu.classList.remove('open');
             }
+        });
+    </script>
 
-            // Add click handlers to dots
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="/assets/logo.png" alt="Logo">
+                    <h3>Doctor-Patient Interface</h3>
+                </div>
+                <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: doctorpatientinterface@gmail.com</p>
+                <p>Phone: 9901527481</p>
+                <p>Address: Shavige Malleshwara Hills, 91st Main Rd,
+                    <br> 1st Stage, Kumaraswamy Layout,
+                </p>
+                <p> Bengaluru, Karnataka 560078</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <p><a href="#mission-page" style="color: #999; text-decoration: none;">Our Mission</a></p>
+                <p><a href="#features-page" style="color: #999; text-decoration: none;">Features</a></p>
+                <p><a href="#goals-page" style="color: #999; text-decoration: none;">Our Goals</a></p>
+                <p><a href="#about-page" style="color: #999; text-decoration: none;">About Us</a></p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+            <p>Developed By Team DPI</p>
+        </div>
+    </footer>
+
+    <script>
+        // Image slider functionality
+        const slider = document.querySelector('.slider');
+        const dots = document.querySelectorAll('.dot');
+        let currentSlide = 0;
+        const slideCount = document.querySelectorAll('.slide').length;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // Update dots
             dots.forEach((dot, index) => {
-                dot.addEventListener('click', () => {
-                    currentSlide = index;
-                    updateSlider();
-                });
+                dot.classList.toggle('active', index === currentSlide);
             });
+        }
 
-            // Auto advance slides every 5 seconds
-            setInterval(nextSlide, 5000);
-
-            // Initial update
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slideCount;
             updateSlider();
-        </script>
+        }
+
+        // Add click handlers to dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                updateSlider();
+            });
+        });
+
+        // Auto advance slides every 5 seconds
+        setInterval(nextSlide, 5000);
+
+        // Initial update
+        updateSlider();
+
+        // Intersection Observer for scroll animations
+        document.addEventListener("DOMContentLoaded", function () {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            // Make sure all .section-animate elements are hidden initially
+            document.querySelectorAll('.section-animate').forEach(section => {
+                section.classList.remove('visible');
+                observer.observe(section);
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+    </script>
+
 
 </body>
 
