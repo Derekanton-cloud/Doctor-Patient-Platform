@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test":"jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles"
   },
   "keywords": [
     "doctor",
@@ -22,7 +22,9 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "csurf": "^1.10.0",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
@@ -41,5 +43,3 @@
     "nodemon": "^3.1.9"
   }
 }
-
-

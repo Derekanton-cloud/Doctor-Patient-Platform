@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const response = await fetch("/auth/login", {
                     method: "POST",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
@@ -47,7 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Store user data and token
                             sessionStorage.setItem("token", data.token);
                             sessionStorage.setItem("user", JSON.stringify(data.user));
-                            
+
+                            // Add after storing the token in sessionStorage
+                            console.log("Token stored:", sessionStorage.getItem("token"));
+                            console.log("User stored:", sessionStorage.getItem("user"));
+
                             showSuccess(data.message || "Successfully logged in");
 
                             // Redirect after delay
@@ -119,33 +123,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-
-// Function to delete user
-async function deleteUser(email) {
-    try {
-        const token = sessionStorage.getItem("token"); // Retrieve the token from sessionStorage
-
-        if (!token) {
-            console.error("User is not authenticated.");
-            return;
-        }
-
-        const response = await fetch("/auth/delete-user", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` // Attach the token in the Authorization header
-            },
-            body: JSON.stringify({ email })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-            console.log("User deleted successfully:", data);
-        } else {
-            console.error("Failed to delete user:", data.error);
-        }
-    } catch (error) {
-        console.error("Error:", error);
-    }
-}

@@ -3,7 +3,7 @@ const session = require("express-session");
 const dotenv = require("dotenv");
 const path = require("path");
 const connectDB = require("./config/db");
-
+const cookieParser = require('cookie-parser');
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -25,8 +25,13 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Use cookie-parser middleware
+app.use(cookieParser());
+
+// Use session middleware
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false
 }));
@@ -43,7 +48,7 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/doctors", doctorRoutes);
-app.use("/patients", patientRoutes);
+app.use("/patient", patientRoutes);
 app.use("/appointments", appointmentRoutes);
 app.use("/prescriptions", prescriptionRoutes);
 

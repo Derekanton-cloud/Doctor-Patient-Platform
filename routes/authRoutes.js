@@ -57,4 +57,44 @@ router.get("/login", (req, res) => res.render("login"));
 router.get("/register", (req, res) => res.render("register"));
 router.get("/admin/dashboard", (req, res) => res.render("adminDashboard"));
 
+// Add at the end before module.exports
+router.get('/debug-auth', (req, res) => {
+  res.json({
+      session: req.session ? {
+          userId: req.session.userId,
+          userRole: req.session.userRole,
+          exists: true
+      } : "No session",
+      cookies: req.cookies || "No cookies",
+      user: req.user ? {
+          id: req.user._id,
+          email: req.user.email,
+          role: req.user.role
+      } : "No user in request",
+      authenticated: !!req.user
+  });
+});
+
+router.get('/logout', (req, res) => {
+  try {
+      // Clear the session
+      req.session.destroy((err) => {
+          if (err) {
+              console.error("Error destroying session:", err);
+              return res.status(500).send("Error logging out");
+          }
+          
+          // Clear the authentication cookie
+          res.clearCookie('token');
+          
+          // Redirect to login page
+          console.log("✅ User logged out successfully");
+          res.redirect('/login');
+      });
+  } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).send("Error logging out");
+  }
+});
+
 module.exports = router;

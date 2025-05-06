@@ -2,43 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 require("dotenv").config();
 
-exports.authenticateUser = async (req, res, next) => {
-  try {
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-          return res.status(401).json({ error: "Unauthorized: No token provided" });
-      }
-
-      const token = authHeader.split(" ")[1];
-      if (!token) {
-          return res.status(401).json({ error: "Unauthorized: Invalid token format" });
-      }
-
-      // Verify JWT
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      if (!decoded?.id) {
-          return res.status(401).json({ error: "Unauthorized: Invalid token" });
-      }
-
-      // Fetch User from Database
-      const user = await User.findById(decoded.id);
-      if (!user) return res.status(404).json({ error: "User not found" });
-
-      // Attach user object to the request
-      req.user = user;
-      next();
-  } catch (err) {
-      console.error("Authentication Error:", err);
-
-      if (err.name === "TokenExpiredError") {
-          return res.status(401).json({ error: "Unauthorized: Token expired" });
-      }
-
-      res.status(401).json({ error: "Unauthorized: Invalid or missing token" });
-  }
-};
-
-
 // ✅ Authorize Role Middleware (Access Control)
 exports.authorizeRole = (roles) => {
   return (req, res, next) => {
@@ -74,4 +37,36 @@ exports.checkDoctorApproval = (req, res, next) => {
     });
   }
   next();
+};
+
+// ✅ Main Authentication Middleware (Updated with session check)
+exports.authenticateUser = async (req, res, next) => {
+  try {
+      // Check for active session first
+      if (!req.session || !req.session.userId) {
+          // No session exists, redirect to login
+          console.log("No active session, redirecting to login");
+          return res.redirect('/login');
+      }
+      
+      const token = req.header('Authorization')?.replace('Bearer ', '') || 
+                   req.cookies.token;
+
+      if (!token) {
+          return res.status(401).redirect('/login');
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+          return res.status(401).redirect('/login');
+      }
+
+      req.user = user;
+      next();
+  } catch (error) {
+      console.error('Auth Error:', error);
+      res.status(401).redirect('/login');
+  }
 };

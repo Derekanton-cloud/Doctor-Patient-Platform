@@ -335,13 +335,26 @@ exports.loginUser = async (req, res) => {
       }
     }
 
-    // Generate token and prepare response
-    const token = generateToken(user);
-    req.session.userId = user._id;
-    console.log("✅ Session created:", {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRY || '24h'
+  });
+  
+  // Set session
+  req.session.userId = user._id;
+  req.session.userRole = user.role;
+  
+  // Set cookie with token
+  res.cookie('token', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: process.env.NODE_ENV === 'production' // Use secure in production
+  });
+  
+  console.log("✅ Session created:", {
       userId: req.session.userId,
-      sessionExists: !!req.session
-    });
+      sessionExists: !!req.session,
+      token: token.substring(0, 15) + "..."
+  });
 
     const userData = {
       id: user._id,
@@ -354,7 +367,7 @@ exports.loginUser = async (req, res) => {
     console.log("✅ Login successful:", {
       email,
       role,
-      redirect: role === "patient" ? "/patientDashboard" : "/doctorProfile"
+      redirect: role === "patient" ? "/patient/dashboard" : "/doctorProfile"
     });
 
     return res.status(200).json({
@@ -362,7 +375,7 @@ exports.loginUser = async (req, res) => {
       message: "Login successful",
       token,
       user: userData,
-      redirect: role === "patient" ? "/patientDashboard" : "/doctorProfile"
+      redirect: role === "patient" ? "/patient/dashboard" : "/doctorProfile"
     });
 
   } catch (err) {

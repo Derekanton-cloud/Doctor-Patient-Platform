@@ -1,0 +1,27 @@
+<!-- filepath: c:\Users\derek\OneDrive\Desktop\doctor-patient-interface\views\patientProfile.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Profile</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome, <%= user.firstName %> <%= user.lastName %>!</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Your Profile</h2>
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <p><strong>Phone:</strong> <%= user.phone %></p>
+            <p><strong>Emergency Contact:</strong> <%= user.emergencyContact %></p>
+            <p><strong>Languages:</strong> <%= user.languages %></p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Doctor-Patient Interface</p>
+    </footer>
+</body>
+</html>
