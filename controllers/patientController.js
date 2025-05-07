@@ -1,7 +1,7 @@
 const Patient = require('../models/patient');
 const Doctor = require('../models/doctor');
 const Appointment = require('../models/appointment');
-const Prescription = require('../models/prescription');
+const Prescription = require('../models/Prescription');
 const { joinTwilioRoom } = require('../utils/videoService');
 const { sendEmail } = require('../utils/emailService');
 const multer = require('multer');

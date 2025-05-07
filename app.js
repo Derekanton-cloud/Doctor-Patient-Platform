@@ -31,9 +31,13 @@ app.use(cookieParser());
 
 // Use session middleware
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: process.env.SESSION_SECRET || 'your-strong-secret-key',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', // Only use secure in production
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
 }));
 
 // Static Files
@@ -42,6 +46,26 @@ app.use(express.static(path.join(__dirname, "public")));
 // View Engine (EJS Setup)
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+// Add this before your routes
+app.use((req, res, next) => {
+  console.log('------ REQUEST PATH:', req.path);
+  console.log('------ SESSION DATA:', req.session);
+  if (req.session.user) {
+    console.log('------ USER ID:', req.session.user.id);
+    console.log('------ USER ROLE:', req.session.user.role);
+  } else {
+    console.log('------ NO USER IN SESSION');
+  }
+  next();
+});
+
+// Add before your routes but after session setup
+app.use((req, res, next) => {
+  console.log(`🔍 Processing ${req.method} ${req.path}`);
+  console.log(`🔐 Auth Status: ${req.session?.user ? 'Authenticated as ' + req.session.user.role : 'Not authenticated'}`);
+  next();
+});
 
 // Routes
 app.use("/auth", authRoutes);
@@ -69,6 +93,17 @@ app.get("/register", (req, res) => {
 // Redirect Admin Dashboard
 app.get("/adminDashboard", (req, res) => {
   res.redirect("/admin/dashboard");
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Application error:', err);
+  res.status(500).render('error', { message: 'An error occurred' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).render('error', { message: 'Page not found' });
 });
 
 // Start Server

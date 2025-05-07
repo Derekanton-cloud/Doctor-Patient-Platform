@@ -335,25 +335,38 @@ exports.loginUser = async (req, res) => {
       }
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRY || '24h'
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRY || '24h'
   });
-  
+
+  console.log('User object:', user)
   // Set session
-  req.session.userId = user._id;
-  req.session.userRole = user.role;
-  
+  req.session.user = {
+    id: user._id.toString(), // Ensure it's a string
+    email: user.email,
+    role: user.role
+  };
+
+  req.session.save((err) => {
+    if (err) {
+      console.error("❌ Session save error:", err);
+    } else {
+      console.log("✅ Session saved successfully");
+    }
+  });
+
   // Set cookie with token
   res.cookie('token', token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      secure: process.env.NODE_ENV === 'production' // Use secure in production
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: process.env.NODE_ENV === 'production' // Use secure in production
   });
-  
+
   console.log("✅ Session created:", {
-      userId: req.session.userId,
-      sessionExists: !!req.session,
-      token: token.substring(0, 15) + "..."
+    userId: req.session.user.id, // <-- This line is important
+    sessionExists: !!req.session,
+    userEmail: req.session.user.email, // Additional check
+    token: token.substring(0, 15) + "..."
   });
 
     const userData = {
@@ -367,7 +380,7 @@ exports.loginUser = async (req, res) => {
     console.log("✅ Login successful:", {
       email,
       role,
-      redirect: role === "patient" ? "/patient/dashboard" : "/doctorProfile"
+      redirect: role === "patient" ? "/patient/dashboard" : "/doctors/dashboard",
     });
 
     return res.status(200).json({
@@ -375,7 +388,7 @@ exports.loginUser = async (req, res) => {
       message: "Login successful",
       token,
       user: userData,
-      redirect: role === "patient" ? "/patient/dashboard" : "/doctorProfile"
+      redirect: role === "patient" ? "/patient/dashboard" : "/doctors/dashboard",
     });
 
   } catch (err) {

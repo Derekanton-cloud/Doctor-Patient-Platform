@@ -2,71 +2,143 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 require("dotenv").config();
 
-// ✅ Authorize Role Middleware (Access Control)
+// Authentication middleware - log real details and be more permissive
+exports.authenticateUser = async (req, res, next) => {
+  try {
+    console.log("AUTH MIDDLEWARE CHECK:", {
+      session: !!req.session,
+      sessionUser: req.session?.user ? true : false,
+      userId: req.session?.user?.id,
+      userRole: req.session?.user?.role
+    });
+
+    // First check if user is in session
+    if (req.session && req.session.user && req.session.user.id) {
+      console.log("✅ User authenticated via session");
+      return next();
+    }
+
+    // Then try token-based auth as fallback
+    const token = req.cookies.token || 
+                 (req.headers.authorization && req.headers.authorization.startsWith('Bearer') ? 
+                  req.headers.authorization.split(' ')[1] : null);
+
+    if (!token) {
+      console.log("❌ No auth token or session found");
+      
+      // Important: Check if this is an AJAX request
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+        return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+      } else {
+        // For regular requests, redirect to login
+        return res.redirect('/login');
+      }
+    }
+
+    try {
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      // Find user
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        console.log("❌ User not found with token ID");
+        if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+          return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+        } else {
+          return res.redirect('/login');
+        }
+      }
+
+      // Add user to request
+      req.user = user;
+      
+      // Set session if it doesn't exist
+      if (!req.session.user) {
+        req.session.user = {
+          id: user._id.toString(),
+          email: user.email,
+          role: user.role
+        };
+        console.log("✅ Session created from token");
+      }
+
+      next();
+    } catch (error) {
+      console.log("❌ Token validation failed:", error.message);
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+        return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+      } else {
+        return res.redirect('/login');
+      }
+    }
+  } catch (error) {
+    console.error("AUTH MIDDLEWARE ERROR:", error);
+    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+      return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+    } else {
+      return res.redirect('/login');
+    }
+  }
+};
+
+// Role-based authorization
 exports.authorizeRole = (roles) => {
   return (req, res, next) => {
-    try {
-      // Ensure User is Authenticated
-      if (!req.user) {
-        return res.status(401).json({ error: "Unauthorized: User not authenticated" });
-      }
+    console.log("ROLE CHECK:", {
+      userRole: req.session?.user?.role,
+      allowedRoles: roles
+    });
 
-      // Ensure the User has the Correct Role
-      if (!roles.includes(req.user.role)) {
-        return res.status(403).json({ error: "Access denied: Insufficient permissions" });
-      }
-
-      // Ensure Approved Doctors Only
-      if (req.user.role === "doctor" && !req.user.isApproved) {
-        return res.status(403).json({ error: "Access denied: Doctor not approved yet" });
-      }
-
-      next(); // User is authorized
-    } catch (err) {
-      console.error("Authorization Error:", err);
-      res.status(500).json({ error: "Internal Server Error" });
+    if (!req.session || !req.session.user || !req.session.user.role) {
+      console.log('❌ No user or role in session');
+      return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
     }
+    
+    const userRole = req.session.user.role;
+    
+    if (!roles.includes(userRole)) {
+      console.log(`❌ Role mismatch: User has ${userRole}, needs one of ${roles.join(', ')}`);
+      return res.status(403).json({ error: 'Forbidden: Insufficient permissions' });
+    }
+
+    console.log('✅ Role authorization successful');
+    next();
   };
 };
 
-// ✅ Check Doctor Approval Status Middleware (For Doctor Dashboard)
+// Legacy version for backward compatibility
+exports.authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    console.log("ROLE CHECK (legacy):", {
+      userRole: req.session?.user?.role,
+      allowedRoles: roles
+    });
+
+    if (!req.session || !req.session.user || !req.session.user.role) {
+      console.log('❌ No user or role in session');
+      return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+    }
+    
+    const userRole = req.session.user.role;
+    
+    if (!roles.includes(userRole)) {
+      console.log(`❌ Role mismatch: User has ${userRole}, needs one of ${roles.join(', ')}`);
+      return res.status(403).json({ error: 'Forbidden: Insufficient permissions' });
+    }
+
+    console.log('✅ Role authorization successful');
+    next();
+  };
+};
+
+// Check Doctor Approval Status Middleware (For Doctor Dashboard)
 exports.checkDoctorApproval = (req, res, next) => {
-  if (req.user.role === "doctor" && !req.user.isApproved) {
+  if (req.user && req.user.role === "doctor" && !req.user.isApproved) {
+    console.log('❌ Doctor not approved:', req.user.email);
     return res.status(403).json({
       error: "Access denied: Awaiting admin approval",
     });
   }
   next();
-};
-
-// ✅ Main Authentication Middleware (Updated with session check)
-exports.authenticateUser = async (req, res, next) => {
-  try {
-      // Check for active session first
-      if (!req.session || !req.session.userId) {
-          // No session exists, redirect to login
-          console.log("No active session, redirecting to login");
-          return res.redirect('/login');
-      }
-      
-      const token = req.header('Authorization')?.replace('Bearer ', '') || 
-                   req.cookies.token;
-
-      if (!token) {
-          return res.status(401).redirect('/login');
-      }
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id);
-
-      if (!user) {
-          return res.status(401).redirect('/login');
-      }
-
-      req.user = user;
-      next();
-  } catch (error) {
-      console.error('Auth Error:', error);
-      res.status(401).redirect('/login');
-  }
 };

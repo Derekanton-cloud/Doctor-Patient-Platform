@@ -11,15 +11,134 @@ const appointmentSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  date: { type: Date, required: true },
-  time: { type: String, required: true }, // e.g., "10:30 AM"
-  reason: { type: String, required: true },
+  appointmentDate: { 
+    type: Date, 
+    required: true 
+  },
+  appointmentType: { 
+    type: String, 
+    enum: ['General Consultation', 'Follow-up', 'Specialist Consultation', 'Emergency'],
+    default: 'General Consultation'
+  },
+  reason: { 
+    type: String, 
+    required: true 
+  },
+  symptoms: [{ 
+    type: String 
+  }],
   status: {
     type: String,
-    enum: ["pending", "approved", "rejected", "completed"],
-    default: "pending",
+    enum: ['Pending', 'Confirmed', 'Cancelled', 'Completed', 'No Show', 'In Progress'],
+    default: 'Pending',
   },
-  createdAt: { type: Date, default: Date.now },
+  notes: { 
+    type: String 
+  },
+  videoRoom: { 
+    type: String 
+  },
+  isVirtual: { 
+    type: Boolean, 
+    default: true 
+  },
+  duration: { 
+    type: Number, 
+    default: 30 // Duration in minutes
+  },
+  reminders: [{
+    sentAt: Date,
+    method: {
+      type: String,
+      enum: ['Email', 'SMS'],
+    }
+  }],
+  cancellationReason: { 
+    type: String 
+  },
+  cancelledBy: {
+    type: String,
+    enum: ['doctor', 'patient']
+  },
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
+  },
+  updatedAt: { 
+    type: Date, 
+    default: Date.now 
+  }
+}, { timestamps: true });
+
+// Index for better performance on common queries
+appointmentSchema.index({ doctor: 1, appointmentDate: 1 });
+appointmentSchema.index({ patient: 1, appointmentDate: 1 });
+appointmentSchema.index({ status: 1 });
+
+// Virtual for formatting the appointment time
+appointmentSchema.virtual('formattedTime').get(function() {
+  return this.appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 });
+
+// Virtual for formatting the appointment date
+appointmentSchema.virtual('formattedDate').get(function() {
+  return this.appointmentDate.toLocaleDateString();
+});
+
+// Method to check if the appointment is active (within the scheduled time + buffer)
+appointmentSchema.methods.isActive = function() {
+  const now = new Date();
+  const appointmentTime = this.appointmentDate;
+  const bufferEnd = new Date(appointmentTime);
+  bufferEnd.setMinutes(bufferEnd.getMinutes() + 15);
+  
+  return (now >= appointmentTime && now <= bufferEnd && this.status === 'Confirmed');
+};
+
+// Method to check if appointment can be cancelled (e.g., not within 24h)
+appointmentSchema.methods.canBeCancelled = function() {
+  const now = new Date();
+  const appointmentTime = this.appointmentDate;
+  const diff = appointmentTime - now;
+  const hoursDiff = diff / (1000 * 60 * 60);
+  
+  return (hoursDiff > 24 && this.status !== 'Completed' && this.status !== 'Cancelled');
+};
+
+// Static method to find upcoming appointments for a doctor
+appointmentSchema.statics.findUpcomingForDoctor = function(doctorId) {
+  return this.find({
+    doctor: doctorId,
+    appointmentDate: { $gt: new Date() },
+    status: { $in: ['Confirmed', 'Pending'] }
+  }).populate('patient', 'firstName lastName email profileImage')
+    .sort({ appointmentDate: 1 });
+};
+
+// Static method to find upcoming appointments for a patient
+appointmentSchema.statics.findUpcomingForPatient = function(patientId) {
+  return this.find({
+    patient: patientId,
+    appointmentDate: { $gt: new Date() },
+    status: { $in: ['Confirmed', 'Pending'] }
+  }).populate('doctor', 'firstName lastName specialty profileImage')
+    .sort({ appointmentDate: 1 });
+};
+
+// Static method to find today's appointments
+appointmentSchema.statics.findTodayAppointments = function(doctorId) {
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+  
+  return this.find({
+    doctor: doctorId,
+    appointmentDate: {
+      $gte: startOfDay,
+      $lte: endOfDay
+    }
+  }).populate('patient', 'firstName lastName email profileImage')
+    .sort({ appointmentDate: 1 });
+};
 
 module.exports = mongoose.model("Appointment", appointmentSchema);
