@@ -12,6 +12,7 @@ const doctorRoutes = require("./routes/doctorRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const prescriptionRoutes = require("./routes/prescriptionRoutes");
+const availabilityRoutes = require('./routes/availabilityRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -75,6 +76,7 @@ app.use("/doctors", doctorRoutes);
 app.use("/patient", patientRoutes);
 app.use("/appointments", appointmentRoutes);
 app.use("/prescriptions", prescriptionRoutes);
+app.use('/api/availability', availabilityRoutes);
 
 // Home Route
 app.get("/", (req, res) => {

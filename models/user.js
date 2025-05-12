@@ -17,12 +17,11 @@ const userSchema = new mongoose.Schema({
   languages: { type: [String], required: true },
   password: { type: String, required: true, select: false, minlength: [8, 'Password must be at least 8 characters long'] },
 
-
   // Patient-specific fields
   bloodGroup: { type: String, match: /^(A|B|AB|O)[+-]$/, required: false },
   medicalHistory: { type: String },
-  medicalFiles: { type: [String] }, // Array of file paths
-  governmentIssuedIdPatient: { type: [String] }, // For patient ID
+  medicalFiles: { type: [String] },
+  governmentIssuedIdPatient: { type: [String] },
   patientId: { type: String },
 
   // Doctor-specific fields
@@ -35,11 +34,11 @@ const userSchema = new mongoose.Schema({
   doctorId: { type: String },
 
   // Verification and Approval
-  isVerified: { type: Boolean, default: false }, // OTP verification status
+  isVerified: { type: Boolean, default: false },
   isApproved: {
     type: Boolean,
     default: function () {
-      return this.role === "patient"; // Auto-approve patients
+      return this.role === "patient";
     },
   },
 }, {
@@ -48,7 +47,6 @@ const userSchema = new mongoose.Schema({
 
 userSchema.index({ role: 1 });
 
-// Existing password hashing middleware
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {
@@ -60,7 +58,6 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// Enhanced password comparison method with error handling
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
@@ -87,5 +84,5 @@ userSchema.pre('validate', function(next) {
   next();
 });
 
-
-module.exports = mongoose.model("User", userSchema);
+// Check if the model is already compiled
+module.exports = mongoose.models.User || mongoose.model("User", userSchema);
