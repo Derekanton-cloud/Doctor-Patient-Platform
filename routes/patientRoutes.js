@@ -48,27 +48,27 @@ router.get('/dashboard', auth, async (req, res) => {
 });
 
 // View specific doctor details
-router.get('/doctor/:id', authenticateUser, isPatient, async (req, res) => {
-    try {
-        const doctor = await User.findOne({
-            _id: req.params.id,
-            role: 'doctor',
-            isVerified: true,
-            isApproved: true
-        });
+router.get('/doctor/:id', async (req, res) => {
+  try {
+    const doctor = await User.findOne({
+      _id: req.params.id,
+      role: 'doctor',
+      isVerified: true,
+      isApproved: true,
+    });
 
-        if (!doctor) {
-            return res.status(404).send('Doctor not found');
-        }
-
-        res.render('doctorDetails', { 
-            doctor, 
-            user: req.user 
-        });
-    } catch (error) {
-        console.error('Error loading doctor details:', error);
-        res.status(500).send('Server error');
+    if (!doctor) {
+      console.log('Doctor not found.');
+      return res.status(404).send('Doctor not found');
     }
+
+    console.log('Doctor details:', doctor);
+    console.log('Rendering doctorDetails.ejs...');
+    res.render('doctorDetails', { doctor });
+  } catch (error) {
+    console.error('Error loading doctor details:', error);
+    res.status(500).send('Server error');
+  }
 });
 
 // Patient Profile - View patient's own profile

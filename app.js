@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const path = require("path");
 const connectDB = require("./config/db");
 const cookieParser = require('cookie-parser');
+const { authenticateUser } = require('./middleware/authMiddleware');
+
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -68,12 +70,13 @@ app.use((req, res, next) => {
   next();
 });
 
+
 // Routes
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/doctors", doctorRoutes);
-app.use("/patient", patientRoutes);
+app.use('/patient', patientRoutes); // Register patient routes
 app.use("/appointments", appointmentRoutes);
 app.use("/prescriptions", prescriptionRoutes);
 app.use('/api/availability', availabilityRoutes);
@@ -103,7 +106,7 @@ app.use((err, req, res, next) => {
   res.status(500).render('error', { message: 'An error occurred' });
 });
 
-// 404 handler
+// 404 Handler
 app.use((req, res) => {
   res.status(404).render('error', { message: 'Page not found' });
 });

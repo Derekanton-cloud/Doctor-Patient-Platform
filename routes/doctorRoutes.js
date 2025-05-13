@@ -3,6 +3,7 @@ const router = express.Router();
 const doctorController = require('../controllers/doctorController');
 const { authenticateUser, authorizeRole } = require('../middleware/authMiddleware');
 const upload = require('../middleware/multerConfig');
+const auth = require('../middleware/auth');
 
 // Add this to your doctorRoutes.js before all other routes
 router.get('/auth-test', authenticateUser, (req, res) => {
@@ -75,5 +76,10 @@ router.put('/profile/availability', authenticateUser, authorizeRole(['doctor']),
 // Video calling feature
 router.get('/video-call/:appointmentId', authenticateUser, authorizeRole(['doctor']), doctorController.initiateVideoCall);
 router.post('/video-call/:appointmentId/end', authenticateUser, authorizeRole(['doctor']), doctorController.endVideoCall);
+
+// Get doctor details by ID
+router.get('/:doctorId', auth, doctorController.getDoctorDetails);
+// Book an appointment
+router.post('/:doctorId/book-appointment', auth, doctorController.bookAppointment);
 
 module.exports = router;

@@ -1,5 +1,5 @@
+const User = require("../models/user");
 const DoctorAvailability = require('../models/availability');
-const User = require('../models/User');
 const { validationResult } = require('express-validator');
 
 // Get doctor's availability

@@ -9,75 +9,81 @@ exports.authenticateUser = async (req, res, next) => {
       session: !!req.session,
       sessionUser: req.session?.user ? true : false,
       userId: req.session?.user?.id,
-      userRole: req.session?.user?.role
+      userRole: req.session?.user?.role,
     });
 
     // First check if user is in session
     if (req.session && req.session.user && req.session.user.id) {
-      console.log("✅ User authenticated via session");
+      console.log("✅ User authenticated via session:", req.session.user);
       return next();
     }
 
     // Then try token-based auth as fallback
-    const token = req.cookies.token || 
-                 (req.headers.authorization && req.headers.authorization.startsWith('Bearer') ? 
-                  req.headers.authorization.split(' ')[1] : null);
+    const token =
+      req.cookies.token ||
+      (req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+        ? req.headers.authorization.split(" ")[1]
+        : null);
+
+    console.log("Token from cookies or headers:", token);
 
     if (!token) {
       console.log("❌ No auth token or session found");
-      
-      // Important: Check if this is an AJAX request
-      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
-        return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+
+      // Check if this is an AJAX request
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf("json") > -1)) {
+        return res.status(401).json({ error: "Unauthorized: User not authenticated" });
       } else {
         // For regular requests, redirect to login
-        return res.redirect('/login');
+        return res.redirect("/login");
       }
     }
 
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
+      console.log("Decoded token:", decoded);
+
       // Find user
       const user = await User.findById(decoded.id);
       if (!user) {
         console.log("❌ User not found with token ID");
-        if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
-          return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+        if (req.xhr || (req.headers.accept && req.headers.accept.indexOf("json") > -1)) {
+          return res.status(401).json({ error: "Unauthorized: User not authenticated" });
         } else {
-          return res.redirect('/login');
+          return res.redirect("/login");
         }
       }
 
       // Add user to request
       req.user = user;
-      
+
       // Set session if it doesn't exist
       if (!req.session.user) {
         req.session.user = {
           id: user._id.toString(),
           email: user.email,
-          role: user.role
+          role: user.role,
         };
-        console.log("✅ Session created from token");
+        console.log("✅ Session created from token:", req.session.user);
       }
 
       next();
     } catch (error) {
       console.log("❌ Token validation failed:", error.message);
-      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
-        return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf("json") > -1)) {
+        return res.status(401).json({ error: "Unauthorized: User not authenticated" });
       } else {
-        return res.redirect('/login');
+        return res.redirect("/login");
       }
     }
   } catch (error) {
     console.error("AUTH MIDDLEWARE ERROR:", error);
-    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
-      return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf("json") > -1)) {
+      return res.status(401).json({ error: "Unauthorized: User not authenticated" });
     } else {
-      return res.redirect('/login');
+      return res.redirect("/login");
     }
   }
 };

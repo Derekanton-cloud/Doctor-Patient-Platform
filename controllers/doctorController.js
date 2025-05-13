@@ -1424,3 +1424,40 @@ exports.initiateVideoCall = async (req, res) => {
 exports.endVideoCall = async (req, res) => {
   // Implementation for ending video call
 };
+
+// Get doctor details
+exports.getDoctorDetails = async (req, res) => {
+  try {
+    const doctor = await User.findById(req.params.doctorId).select('-password');
+    if (!doctor || doctor.role !== 'doctor') {
+      return res.status(404).json({ success: false, message: 'Doctor not found' });
+    }
+
+    res.render('doctorDetails', { doctor });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// Book an appointment
+exports.bookAppointment = async (req, res) => {
+  try {
+    const { date, time } = req.body;
+
+    const appointment = new Appointment({
+      patient: req.user._id,
+      doctor: req.params.doctorId,
+      date,
+      time,
+      status: 'Pending',
+    });
+
+    await appointment.save();
+
+    res.status(200).json({ success: true, message: 'Appointment booked successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
