@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call | Doctor-Patient Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://unpkg.com/simple-peer@9.11.0/simplepeer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #047cde;
+            --primary-dark: #0366b5;
+            --secondary-color: #e9f2fb;
+            --accent-color: #4caf50;
+            --text-color: #333333;
+            --text-light: #666666;
+            --bg-color: #f0f8ff;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            height: calc(100vh - 100px);
+            width: 100%;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: #222;
+            box-shadow: var(--shadow);
+        }
+
+        .remote-video-wrapper {
+            flex: 3;
+            min-width: 65%;
+        }
+
+        .local-video-wrapper {
+            flex: 1;
+            min-width: 30%;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        .call-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .call-control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .audio-btn {
+            background-color: #2196F3;
+        }
+
+        .audio-btn:hover {
+            background-color: #0d8bf2;
+        }
+
+        .audio-btn.muted {
+            background-color: #90caf9;
+            color: #1565c0;
+        }
+
+        .video-btn {
+            background-color: #4CAF50;
+        }
+
+        .video-btn:hover {
+            background-color: #3d8b40;
+        }
+
+        .video-btn.muted {
+            background-color: #a5d6a7;
+            color: #2e7d32;
+        }
+
+        .end-call-btn {
+            background-color: #f44336;
+        }
+
+        .end-call-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .user-name {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .connecting-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 500;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                flex-direction: column;
+            }
+            
+            .remote-video-wrapper, .local-video-wrapper {
+                width: 100%;
+                height: 50%;
+            }
+            
+            .call-controls {
+                padding: 10px 20px;
+            }
+            
+            .call-control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <div class="video-wrapper remote-video-wrapper">
+            <div class="connecting-message" id="connecting-message">
+                <i class="fas fa-spinner fa-spin"></i> Waiting for the other party to join...
+            </div>
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="user-name" id="remote-name">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+        <div class="video-wrapper local-video-wrapper">
+            <video id="localVideo" autoplay muted playsinline></video>
+            <div class="user-name" id="local-name">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div class="call-controls">
+        <button class="call-control-btn audio-btn" id="toggleAudio">
+            <i class="fas fa-microphone"></i>
+        </button>
+        <button class="call-control-btn video-btn" id="toggleVideo">
+            <i class="fas fa-video"></i>
+        </button>
+        <button class="call-control-btn end-call-btn" id="endCall">
+            <i class="fas fa-phone-slash"></i>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const localVideo = document.getElementById('localVideo');
+            const remoteVideo = document.getElementById('remoteVideo');
+            const toggleAudioBtn = document.getElementById('toggleAudio');
+            const toggleVideoBtn = document.getElementById('toggleVideo');
+            const endCallBtn = document.getElementById('endCall');
+            const connectingMessage = document.getElementById('connecting-message');
+            const localName = document.getElementById('local-name');
+            const remoteName = document.getElementById('remote-name');
+            
+            // Call data
+            const appointmentId = '<%= appointment._id %>';
+            
+            // Add this code to get role from URL if it exists (more reliable)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlRole = urlParams.get('role');
+            
+            // User data - prioritize URL role over passed role
+            const userRole = urlRole || '<%= role %>';
+            const userId = '<%= user._id %>';
+            const userName = '<%= user.firstName %> <%= user.lastName %>';
+            
+            // Set the local user name
+            const displayName = userName + (userRole === 'doctor' ? ' (Doctor)' : ' (Patient)');
+            localName.textContent = displayName;
+            
+            // Stream variables
+            let localStream;
+            let peer;
+            let socket;
+            
+            // Connect to socket.io server
+            socket = io.connect();
+            
+            // Initialize media stream
+            async function initializeStream() {
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: true, 
+                        audio: true 
+                    });
+                    
+                    // Display local video
+                    localVideo.srcObject = localStream;
+                    
+                    // Join the call room
+                    socket.emit('join-call', {
+                        appointmentId,
+                        userId,
+                        userName,
+                        userRole: userRole // Use the determined role
+                    });
+                    
+                    // Listen for connection events
+                    setupSocketListeners();
+                    
+                } catch (err) {
+                    console.error('Error accessing media devices:', err);
+                    alert('Could not access camera or microphone. Please ensure they are connected and permissions are granted.');
+                }
+            }
+            
+            function setupSocketListeners() {
+                // When the other user joins
+                socket.on('user-connected', (data) => {
+                    connectingMessage.style.display = 'none';
+                    remoteName.textContent = data.userName + (data.userRole === 'doctor' ? ' (Doctor)' : ' (Patient)');
+                    
+                    // Create peer connection
+                    createPeerConnection(data.isInitiator);
+                });
+                
+                // Handle signaling data
+                socket.on('signal', (data) => {
+                    if (peer) {
+                        peer.signal(data.signal);
+                    }
+                });
+                
+                // Handle when other user leaves
+                socket.on('user-disconnected', () => {
+                    connectingMessage.style.display = 'block';
+                    connectingMessage.textContent = 'The other user has left the call.';
+                    
+                    if (remoteVideo.srcObject) {
+                        remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+                        remoteVideo.srcObject = null;
+                    }
+                    
+                    if (peer) {
+                        peer.destroy();
+                        peer = null;
+                    }
+                });
+            }
+            
+            function createPeerConnection(isInitiator) {
+                peer = new SimplePeer({
+                    initiator: isInitiator,
+                    stream: localStream,
+                    trickle: false
+                });
+                
+                peer.on('signal', (data) => {
+                    socket.emit('signal', {
+                        appointmentId,
+                        signal: data
+                    });
+                });
+                
+                peer.on('stream', (stream) => {
+                    remoteVideo.srcObject = stream;
+                });
+                
+                peer.on('error', (err) => {
+                    console.error('Peer error:', err);
+                });
+            }
+            
+            // Toggle audio
+            toggleAudioBtn.addEventListener('click', () => {
+                localStream.getAudioTracks().forEach(track => {
+                    track.enabled = !track.enabled;
+                    toggleAudioBtn.innerHTML = track.enabled ? 
+                        '<i class="fas fa-microphone"></i>' : 
+                        '<i class="fas fa-microphone-slash"></i>';
+                });
+            });
+            
+            // Toggle video
+            toggleVideoBtn.addEventListener('click', () => {
+                localStream.getVideoTracks().forEach(track => {
+                    track.enabled = !track.enabled;
+                    toggleVideoBtn.innerHTML = track.enabled ? 
+                        '<i class="fas fa-video"></i>' : 
+                        '<i class="fas fa-video-slash"></i>';
+                });
+            });
+            
+            // End call
+            endCallBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to end the call?')) {
+                    // Stop all tracks
+                    if (localStream) {
+                        localStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // Destroy peer connection
+                    if (peer) {
+                        peer.destroy();
+                    }
+                    
+                    // Notify server that user left
+                    socket.emit('leave-call', { appointmentId, userId });
+                    
+                    // Close window or redirect
+                    window.close();
+                }
+            });
+            
+            // Initialize the call
+            initializeStream();
+            
+            // Handle page closing
+            window.addEventListener('beforeunload', () => {
+                socket.emit('leave-call', { appointmentId, userId });
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                }
+            });
+        });
+    </script>
+</body>
+</html>

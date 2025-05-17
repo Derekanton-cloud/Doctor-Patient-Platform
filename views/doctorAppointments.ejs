@@ -35,12 +35,17 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            flex: 1;
+            /* This makes the container take up all available space */
         }
 
         /* Navbar Styles */
@@ -434,7 +439,8 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            z-index: 2000;
+            /* Higher z-index to be above footer */
             justify-content: center;
             align-items: center;
         }
@@ -445,20 +451,26 @@
 
         .modal-content {
             background-color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
+            max-width: 650px;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 2001;
+            /* Higher than the modal backdrop */
+            border: none;
         }
 
         .modal-header {
-            padding: 20px;
+            padding: 20px 25px;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: #fbfbfb;
+            border-radius: 16px 16px 0 0;
         }
 
         .modal-header h2 {
@@ -476,40 +488,197 @@
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 25px;
         }
 
+        /* Update prescription form layout and styling for a more professional look */
         .prescription-form {
             display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        /* Enhance medication item styling */
+        .medication-item {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .medication-item h4 {
+            color: var(--primary-dark);
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .medication-item h4:before {
+            content: '\f484';
+            /* Font Awesome pill icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 8px;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+
+        .med-row {
+            display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
+        /* Improved form control styling */
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
+            margin-bottom: 8px;
+            font-weight: 600;
             color: var(--text-color);
+            font-size: 14px;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
             font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: white;
         }
 
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(4, 124, 222, 0.1);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .add-medication-btn-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        #addMedicationBtn {
+            background-color: #fff0f0;
+            border: 2px dashed #ffcdd2;
+            color: #d32f2f;
+            padding: 12px 24px;
+            width: auto;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-radius: 30px;
+        }
+
+        #addMedicationBtn:hover {
+            background-color: #ffebee;
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.15);
+            transform: translateY(-2px);
+        }
+
+        #addMedicationBtn i {
+            font-size: 16px;
+            margin-right: 5px;
+        }
+
+        .remove-medication-btn {
+            padding: 8px 12px;
+            background-color: transparent;
+            color: #d32f2f;
+            border: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-medication-btn:hover {
+            background-color: #ffebee;
+            border-radius: 5px;
+        }
+
+        .remove-medication-btn i {
+            font-size: 12px;
+        }
+
+        /* Modal footer styling */
         .modal-footer {
             padding: 20px;
             border-top: 1px solid #f0f0f0;
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 15px;
+        }
+
+        .modal-footer .btn {
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        #cancelPrescription {
+            background-color: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        #cancelPrescription:hover {
+            background-color: #e9ecef;
+        }
+
+        #savePrescription {
+            background-color: var(--accent-color);
+        }
+
+        #savePrescription:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+
+        /* Additional styling for the modal itself */
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 2001;
+            /* Higher than the modal backdrop */
+            border: none;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fbfbfb;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-body {
+            padding: 25px;
         }
 
         /* Toast notification */
@@ -521,7 +690,8 @@
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             display: none;
-            z-index: 1000;
+            z-index: 2500;
+            /* Higher than modal and footer */
             min-width: 300px;
             max-width: 400px;
             transform: translateY(100px);
@@ -629,9 +799,11 @@
             background: linear-gradient(135deg, #000000, #1a1a1a);
             color: #fff;
             padding: 30px 0;
+            width: 100%;
             position: relative;
-            margin-top: auto;
-            /* Pushes footer to bottom when content is short */
+            z-index: 1000;
+            margin-top: 50px;
+            /* Add margin to prevent overlapping with content */
         }
 
         .footer-content {
@@ -748,185 +920,221 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="/" class="navbar-logo">
-            <img src="/assets/logo.png" alt="Logo">
-            <h1>Doctor-Patient Interface</h1>
-        </a>
-        <div class="navbar-links">
-            <a href="/doctors/dashboard" class="nav-button">
-                <i class="fas fa-columns"></i> Dashboard
+    <div class="page-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <a href="/" class="navbar-logo">
+                <img src="/assets/logo.png" alt="Logo">
+                <h1>Doctor-Patient Interface</h1>
             </a>
-            <div class="profile-dropdown">
-                <button class="profile-button">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <div class="dropdown-content">
-                    <a href="/doctors/profile"><i class="fas fa-id-card"></i> View Profile</a>
-                    <a href="/doctors/settings"><i class="fas fa-cog"></i> Settings</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <div class="navbar-links">
+                <a href="/doctors/dashboard" class="nav-button">
+                    <i class="fas fa-columns"></i> Dashboard
+                </a>
+                <div class="profile-dropdown">
+                    <button class="profile-button">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="/doctors/profile"><i class="fas fa-id-card"></i> View Profile</a>
+                        <a href="/doctors/settings"><i class="fas fa-cog"></i> Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="container">
-        <h1 class="page-title">
-            <i class="fas fa-calendar-check"></i> My Patient Appointments
-        </h1>
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-calendar-check"></i> My Patient Appointments
+            </h1>
 
-        <div class="appointments-container">
-            <% if (appointments && appointments.length> 0) { %>
+            <div class="appointments-container">
+                <% if (appointments && appointments.length> 0) { %>
                 <% appointments.forEach(appointment=> { %>
-                    <div class="appointment-card" data-id="<%= appointment._id %>">
-                        <div class="appointment-header">
-                            <div class="patient-img">
+                <div class="appointment-card" data-id="<%= appointment._id %>">
+                    <div class="appointment-header">
+                        <div class="patient-img">
+                            <% if (appointment.patient) { %>
+                            <% if (appointment.patient.profileImage) { %>
+                            <img src="/<%= appointment.patient.profileImage %>" alt="Patient">
+                            <% } else { %>
+                            <i class="fas fa-user"></i>
+                            <% } %>
+                            <% } else if (appointment.isGuestBooking) { %>
+                            <!-- Guest booking - show a default avatar -->
+                            <i class="fas fa-user"></i>
+                            <% } else { %>
+                            <!-- No patient information available -->
+                            <i class="fas fa-user"></i>
+                            <% } %>
+                        </div>
+                        <div class="appointment-details">
+                            <h3 class="patient-name">
                                 <% if (appointment.patient) { %>
-                                    <% if (appointment.patient.profileImage) { %>
-                                        <img src="/<%= appointment.patient.profileImage %>" alt="Patient">
-                                        <% } else { %>
-                                            <i class="fas fa-user"></i>
-                                            <% } %>
-                                                <% } else if (appointment.isGuestBooking) { %>
-                                                    <!-- Guest booking - show a default avatar -->
-                                                    <i class="fas fa-user"></i>
-                                                    <% } else { %>
-                                                        <!-- No patient information available -->
-                                                        <i class="fas fa-user"></i>
-                                                        <% } %>
-                            </div>
-                            <div class="appointment-details">
-                                <h3 class="patient-name">
-                                    <% if (appointment.patient) { %>
-                                        <%= appointment.patient.firstName %>
-                                            <%= appointment.patient.lastName %>
-                                                <% } else if (appointment.isGuestBooking) { %>
-                                                    <%= appointment.guestInformation.name %> <span
-                                                            class="guest-badge">Guest</span>
-                                                        <% } else { %>
-                                                            Unknown Patient
-                                                            <% } %>
-                                </h3>
-                                <p class="appointment-id">Appointment ID: <%= appointment._id.toString().slice(-8) %>
-                                </p>
-                            </div>
-                            <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
-                                <%= appointment.status %>
+                                <%= appointment.patient.firstName %>
+                                <%= appointment.patient.lastName %>
+                                <% } else if (appointment.isGuestBooking) { %>
+                                <%= appointment.guestInformation.name %> <span class="guest-badge">Guest</span>
+                                <% } else { %>
+                                Unknown Patient
+                                <% } %>
+                            </h3>
+                            <p class="appointment-id">Appointment ID: <%= appointment._id.toString().slice(-8) %>
+                            </p>
+                        </div>
+                        <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
+                            <%= appointment.status %>
+                        </span>
+                    </div>
+                    <div class="appointment-body">
+                        <div class="appointment-info">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>
+                                <%= new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
+                                weekday: 'long' , year: 'numeric' , month: 'long' , day: 'numeric' }) %>
                             </span>
                         </div>
-                        <div class="appointment-body">
-                            <div class="appointment-info">
-                                <i class="far fa-calendar-alt"></i>
-                                <span>
-                                    <%= new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
-                                        weekday: 'long' , year: 'numeric' , month: 'long' , day: 'numeric' }) %>
-                                </span>
-                            </div>
-                            <div class="appointment-info">
-                                <i class="far fa-clock"></i>
-                                <span>
-                                    <%= new Date(appointment.appointmentDate).toLocaleTimeString('en-US', {
-                                        hour: '2-digit' , minute: '2-digit' }) %>
-                                </span>
-                            </div>
-                            <div class="appointment-reason">
-                                <h4>Reason for Visit</h4>
-                                <p>
-                                    <%= appointment.reason %>
+                        <div class="appointment-info">
+                            <i class="far fa-clock"></i>
+                            <span>
+                                <%= new Date(appointment.appointmentDate).toLocaleTimeString('en-US', {
+                                hour: '2-digit' , minute: '2-digit' }) %>
+                            </span>
+                        </div>
+                        <div class="appointment-reason">
+                            <h4>Reason for Visit</h4>
+                            <p>
+                                <%= appointment.reason %>
+                            </p>
+                        </div>
+
+                        <% if (appointment.prescriptions && appointment.prescriptions.length> 0) { %>
+                        <div class="prescriptions-list">
+                            <h4><i class="fas fa-prescription"></i> Prescriptions</h4>
+                            <% appointment.prescriptions.forEach(prescription=> { %>
+                            <div class="prescription-item">
+                                <p class="med-name">
+                                    <%= prescription.medication %>
                                 </p>
+                                <p><strong>Dosage:</strong>
+                                    <%= prescription.dosage %>
+                                </p>
+                                <p><strong>Frequency:</strong>
+                                    <%= prescription.frequency %>
+                                </p>
+                                <p><strong>Duration:</strong>
+                                    <%= prescription.duration %>
+                                </p>
+                                <% if (prescription.notes) { %>
+                                <p><strong>Notes:</strong>
+                                    <%= prescription.notes %>
+                                </p>
+                                <% } %>
                             </div>
-
-                            <% if (appointment.prescriptions && appointment.prescriptions.length> 0) { %>
-                                <div class="prescriptions-list">
-                                    <h4><i class="fas fa-prescription"></i> Prescriptions</h4>
-                                    <% appointment.prescriptions.forEach(prescription=> { %>
-                                        <div class="prescription-item">
-                                            <p class="med-name">
-                                                <%= prescription.medication %>
-                                            </p>
-                                            <p><strong>Dosage:</strong>
-                                                <%= prescription.dosage %>
-                                            </p>
-                                            <p><strong>Frequency:</strong>
-                                                <%= prescription.frequency %>
-                                            </p>
-                                            <p><strong>Duration:</strong>
-                                                <%= prescription.duration %>
-                                            </p>
-                                            <% if (prescription.notes) { %>
-                                                <p><strong>Notes:</strong>
-                                                    <%= prescription.notes %>
-                                                </p>
-                                                <% } %>
-                                        </div>
-                                        <% }); %>
-                                </div>
-                                <% } %>
-
-                                    <% if (appointment.notes) { %>
-                                        <div class="appointment-notes">
-                                            <h4>Doctor's Notes</h4>
-                                            <p>
-                                                <%= appointment.notes %>
-                                            </p>
-                                        </div>
-                                        <% } %>
+                            <% }); %>
                         </div>
-                        <div class="appointment-actions">
-                            <% if (appointment.status==='Pending' ) { %>
-                                <button class="btn btn-success btn-confirm" data-id="<%= appointment._id %>">
-                                    <i class="fas fa-check-circle"></i> Confirm
-                                </button>
-                                <% } %>
+                        <% } %>
 
-                                    <% if (['Pending', 'Confirmed' ].includes(appointment.status)) { %>
-                                        <button class="btn btn-danger btn-cancel" data-id="<%= appointment._id %>">
-                                            <i class="fas fa-times-circle"></i> Cancel
-                                        </button>
-                                        <% } %>
-
-                                            <% if (!appointment.meetingLink && appointment.status==='Confirmed' ) { %>
-                                                <button class="btn btn-primary btn-add-link"
-                                                    data-id="<%= appointment._id %>">
-                                                    <i class="fas fa-video"></i> Add Meeting Link
-                                                </button>
-                                                <% } %>
-
-                                                    <% if (appointment.status==='Confirmed' ) { %>
-                                                        <button class="btn btn-primary btn-add-prescription"
-                                                            data-id="<%= appointment._id %>">
-                                                            <i class="fas fa-prescription"></i> Add Prescription
-                                                        </button>
-
-                                                        <% if (appointment.meetingLink) { %>
-                                                            <a href="<%= appointment.meetingLink %>"
-                                                                class="btn btn-primary" target="_blank">
-                                                                <i class="fas fa-video"></i> Join Call
-                                                            </a>
-                                                            <% } %>
-
-                                                                <button class="btn btn-success btn-complete"
-                                                                    data-id="<%= appointment._id %>">
-                                                                    <i class="fas fa-check-double"></i> Complete
-                                                                </button>
-                                                                <% } %>
+                        <% if (appointment.notes) { %>
+                        <div class="appointment-notes">
+                            <h4>Doctor's Notes</h4>
+                            <p>
+                                <%= appointment.notes %>
+                            </p>
                         </div>
+                        <% } %>
                     </div>
-                    <% }); %>
-                        <% } else { %>
-                            <div class="empty-state">
-                                <i class="far fa-calendar-times"></i>
-                                <h3>No Appointments Found</h3>
-                                <p>You don't have any appointments scheduled. Update your availability to allow patients
-                                    to book appointments with you.</p>
-                                <a href="/doctor/availability" class="btn-browse">Manage Availability</a>
-                            </div>
-                            <% } %>
+                    <div class="appointment-actions">
+                        <% if (appointment.status==='Pending' ) { %>
+                        <button class="btn btn-success btn-confirm" data-id="<%= appointment._id %>">
+                            <i class="fas fa-check-circle"></i> Confirm
+                        </button>
+                        <% } %>
+
+                        <% if (['Pending', 'Confirmed' ].includes(appointment.status)) { %>
+                        <button class="btn btn-danger btn-cancel" data-id="<%= appointment._id %>">
+                            <i class="fas fa-times-circle"></i> Cancel
+                        </button>
+                        <% } %>
+
+                        <% if (appointment.status==='Confirmed' ) { %>
+                        <button class="btn btn-primary btn-add-prescription"
+                            data-id="<%= appointment._id %>">
+                            <i class="fas fa-prescription"></i> Add Prescription
+                        </button>
+
+                        <button class="btn btn-primary btn-start-call"
+                            data-id="<%= appointment._id %>">
+                            <i class="fas fa-video"></i> Start Video Call
+                        </button>
+
+                        <button class="btn btn-success btn-complete"
+                            data-id="<%= appointment._id %>">
+                            <i class="fas fa-check-double"></i> Complete
+                        </button>
+                        <% } %>
+                    </div>
+                </div>
+                <% }); %>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="far fa-calendar-times"></i>
+                    <h3>No Appointments Found</h3>
+                    <p>You don't have any appointments scheduled. Update your availability to allow patients
+                        to book appointments with you.</p>
+                    <a href="/doctor/availability" class="btn-browse">Manage Availability</a>
+                </div>
+                <% } %>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="/assets/logo.png" alt="Logo">
+                        <h3>Doctor-Patient Interface</h3>
+                    </div>
+                    <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Email: doctorpatientinterface@gmail.com</p>
+                    <p>Phone: 9901527481</p>
+                    <p>Address: Shavige Malleshwara Hills, 91st Main Rd, Bengaluru, Karnataka 560078</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <p><a href="/doctors/dashboard" style="color: #999; text-decoration: none;">Dashboard</a></p>
+                    <p><a href="/doctors/appointments" style="color: #999; text-decoration: none;">My Appointments</a>
+                    </p>
+                    <p><a href="/doctors/patients" style="color: #999; text-decoration: none;">My Patients</a></p>
+                    <p><a href="/doctors/prescriptions" style="color: #999; text-decoration: none;">Prescriptions</a>
+                    </p>
+                    <p><a href="/doctors/medicalrecords" style="color: #999; text-decoration: none;">Medical Records</a>
+                    </p>
+                    <p><a href="/doctors/profile" style="color: #999; text-decoration: none;">Profile</a></p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+                <p>Developed By Team DPI</p>
+            </div>
+        </footer>
     </div>
 
+    <!-- Modals should be outside the page-wrapper for proper z-indexing -->
     <!-- Prescription Modal -->
     <div id="prescriptionModal" class="modal">
         <div class="modal-content">
@@ -938,33 +1146,53 @@
                 <form id="prescriptionForm" class="prescription-form">
                     <input type="hidden" id="prescriptionAppointmentId" name="appointmentId">
 
-                    <div class="form-group">
-                        <label for="medication">Medication</label>
-                        <input type="text" id="medication" name="medication" class="form-control" required>
+                    <div id="medications-container">
+                        <!-- Initial medication form fields -->
+                        <div class="medication-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4>Medication 1</h4>
+                            </div>
+
+                            <div class="med-row">
+                                <div class="form-group">
+                                    <label for="medication-0">Medication Name</label>
+                                    <input type="text" id="medication-0" name="medications[0][medication]" class="form-control"
+                                        required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dosage-0">Dosage</label>
+                                    <input type="text" id="dosage-0" name="medications[0][dosage]" class="form-control" required
+                                        placeholder="e.g., 500mg">
+                                </div>
+                            </div>
+
+                            <div class="med-row">
+                                <div class="form-group">
+                                    <label for="frequency-0">Frequency</label>
+                                    <input type="text" id="frequency-0" name="medications[0][frequency]" class="form-control"
+                                        required placeholder="e.g., Twice daily">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="duration-0">Duration</label>
+                                    <input type="text" id="duration-0" name="medications[0][duration]" class="form-control"
+                                        required placeholder="e.g., 7 days">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="dosage">Dosage</label>
-                        <input type="text" id="dosage" name="dosage" class="form-control" required
-                            placeholder="e.g., 500mg">
+                    <div class="add-medication-btn-container">
+                        <button type="button" id="addMedicationBtn" class="btn">
+                            <i class="fas fa-plus"></i> Add Another Medication
+                        </button>
                     </div>
 
-                    <div class="form-group">
-                        <label for="frequency">Frequency</label>
-                        <input type="text" id="frequency" name="frequency" class="form-control" required
-                            placeholder="e.g., Twice daily">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="duration">Duration</label>
-                        <input type="text" id="duration" name="duration" class="form-control" required
-                            placeholder="e.g., 7 days">
-                    </div>
-
-                    <div class="form-group full-width">
+                    <div class="form-group full-width" style="margin-top: 20px;">
                         <label for="prescriptionNotes">Notes</label>
-                        <textarea id="prescriptionNotes" name="notes" class="form-control" rows="3"
-                            placeholder="Additional instructions"></textarea>
+                        <textarea id="prescriptionNotes" name="notes" class="form-control" rows="3
+                            " placeholder="Additional instructions"></textarea>
                     </div>
                 </form>
             </div>
@@ -1016,46 +1244,6 @@
             <button class="toast-close"><i class="fas fa-times"></i></button>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <div class="footer-logo">
-                    <img src="/assets/logo.png" alt="Logo">
-                    <h3>Doctor-Patient Interface</h3>
-                </div>
-                <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
-            </div>
-
-            <div class="footer-section">
-                <h4>Contact Us</h4>
-                <p>Email: doctorpatientinterface@gmail.com</p>
-                <p>Phone: 9901527481</p>
-                <p>Address: Shavige Malleshwara Hills, 91st Main Rd, Bengaluru, Karnataka 560078</p>
-            </div>
-
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <p><a href="/doctors/dashboard" style="color: #999; text-decoration: none;">Dashboard</a></p>
-                <p><a href="/doctors/appointments" style="color: #999; text-decoration: none;">My Appointments</a></p>
-                <p><a href="/doctors/patients" style="color: #999; text-decoration: none;">My Patients</a></p>
-                <p><a href="/doctors/prescriptions" style="color: #999; text-decoration: none;">Prescriptions</a></p>
-                <p><a href="/doctors/medicalrecords" style="color: #999; text-decoration: none;">Medical Records</a></p>
-                <p><a href="/doctors/profile" style="color: #999; text-decoration: none;">Profile</a></p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
-            <p>Developed By Team DPI</p>
-        </div>
-    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1192,48 +1380,61 @@
                     if (confirm('Mark this appointment as completed?')) {
                         const appointmentId = this.getAttribute('data-id');
                         try {
+                            // Debug the request
+                            console.log('Sending complete request for appointment:', appointmentId);
+                            
+                            // Make sure we're sending the correct JSON with proper capitalization
+                            const requestBody = {
+                                status: "Completed"  // Exact match for the expected value
+                            };
+                            
+                            console.log('Request body:', JSON.stringify(requestBody));
+                            
                             const response = await fetch(`/doctors/appointments/${appointmentId}/update`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({
-                                    status: 'Completed'
-                                })
+                                body: JSON.stringify(requestBody)
                             });
 
-                            const result = await response.json();
+                            // Parse response as text first to debug
+                            const responseText = await response.text();
+                            console.log('Response text:', responseText);
+                            
+                            // Then parse as JSON if possible
+                            let result;
+                            try {
+                                result = JSON.parse(responseText);
+                            } catch (e) {
+                                console.error('Failed to parse response as JSON:', e);
+                                throw new Error('Invalid response format');
+                            }
 
                             if (result.success) {
                                 showToast('Appointment marked as completed', 'success');
                                 
-                                // Apply buffer time before removing the appointment
+                                // Update the UI to show completed status
                                 const appointmentCard = document.querySelector(`.appointment-card[data-id="${appointmentId}"]`);
-                                
                                 if (appointmentCard) {
                                     const statusSpan = appointmentCard.querySelector('.appointment-status');
-                                    
                                     if (statusSpan) {
                                         statusSpan.className = 'appointment-status status-completed';
                                         statusSpan.textContent = 'Completed';
                                     }
                                     
-                                    // Update the appointment card actions
-                                    updateAppointmentCardActions(appointmentCard, 'Completed');
-                                    
-                                    // Keep the appointment visible for a buffer period (24 hours)
-                                    // In a real app, this would be handled server-side with a background job
-                                    // For now, we'll just update the UI
+                                    // Replace action buttons with completion message
+                                    const actionsDiv = appointmentCard.querySelector('.appointment-actions');
+                                    if (actionsDiv) {
+                                        actionsDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; text-align: center;"><i class="fas fa-check-circle"></i> This appointment has been completed.</div>';
+                                    }
                                 }
-                                
-                                // Update dashboard counts
-                                updateDashboardCounts();
                             } else {
-                                showToast(result.message, 'error');
+                                showToast(result.message || 'Failed to complete appointment', 'error');
                             }
                         } catch (error) {
                             console.error('Error completing appointment:', error);
-                            showToast('Failed to complete appointment', 'error');
+                            showToast('Failed to complete appointment. Please try again.', 'error');
                         }
                     }
                 });
@@ -1249,7 +1450,60 @@
                 });
             });
 
-            // Save prescription
+            // Add functionality for multiple medications
+            let medicationCount = 1;
+            const medicationsContainer = document.getElementById('medications-container');
+            const addMedicationBtn = document.getElementById('addMedicationBtn');
+            
+            // Function to add another medication form group
+            addMedicationBtn.addEventListener('click', function() {
+                const newMedicationIndex = medicationCount++;
+                const newMedicationItem = document.createElement('div');
+                newMedicationItem.className = 'medication-item';
+                
+                newMedicationItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4>Medication ${medicationCount}</h4>
+                        <button type="button" class="remove-medication-btn btn">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                    
+                    <div class="med-row">
+                        <div class="form-group">
+                            <label for="medication-${newMedicationIndex}">Medication Name</label>
+                            <input type="text" id="medication-${newMedicationIndex}" name="medications[${newMedicationIndex}][medication]" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dosage-${newMedicationIndex}">Dosage</label>
+                            <input type="text" id="dosage-${newMedicationIndex}" name="medications[${newMedicationIndex}][dosage]" class="form-control" required placeholder="e.g., 500mg">
+                        </div>
+                    </div>
+
+                    <div class="med-row">
+                        <div class="form-group">
+                            <label for="frequency-${newMedicationIndex}">Frequency</label>
+                            <input type="text" id="frequency-${newMedicationIndex}" name="medications[${newMedicationIndex}][frequency]" class="form-control" required placeholder="e.g., Twice daily">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration-${newMedicationIndex}">Duration</label>
+                            <input type="text" id="duration-${newMedicationIndex}" name="medications[${newMedicationIndex}][duration]" class="form-control" required placeholder="e.g., 7 days">
+                        </div>
+                    </div>
+                `;
+                
+                medicationsContainer.appendChild(newMedicationItem);
+                
+                // Add event listener to the new remove button
+                const removeBtn = newMedicationItem.querySelector('.remove-medication-btn');
+                removeBtn.addEventListener('click', function() {
+                    medicationsContainer.removeChild(newMedicationItem);
+                });
+            });
+            
+            // Modify the save prescription functionality to handle multiple medications
             savePrescriptionBtn.addEventListener('click', async function () {
                 const form = document.getElementById('prescriptionForm');
 
@@ -1259,11 +1513,22 @@
                 }
 
                 const appointmentId = document.getElementById('prescriptionAppointmentId').value;
+                
+                // Gather all medications
+                const medications = [];
+                const medicationItems = document.querySelectorAll('.medication-item');
+                
+                medicationItems.forEach((item, index) => {
+                    medications.push({
+                        medication: document.getElementById(`medication-${index}`).value,
+                        dosage: document.getElementById(`dosage-${index}`).value,
+                        frequency: document.getElementById(`frequency-${index}`).value,
+                        duration: document.getElementById(`duration-${index}`).value
+                    });
+                });
+                
                 const formData = {
-                    medication: document.getElementById('medication').value,
-                    dosage: document.getElementById('dosage').value,
-                    frequency: document.getElementById('frequency').value,
-                    duration: document.getElementById('duration').value,
+                    medications: medications,
                     notes: document.getElementById('prescriptionNotes').value
                 };
 
@@ -1290,7 +1555,7 @@
                     showToast('Failed to add prescription', 'error');
                 }
             });
-
+            
             // Open meeting link modal
             addMeetingLinkButtons.forEach(button => {
                 button.addEventListener('click', function () {
@@ -1398,6 +1663,34 @@
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
 
+            // Add event listeners for the Start Video Call buttons that exist on page load
+            const startCallButtons = document.querySelectorAll('.btn-start-call');
+            
+            startCallButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const appointmentId = this.getAttribute('data-id');
+                    console.log('Starting video call for appointment:', appointmentId);
+                    
+                    try {
+                        // Pass doctor role information directly in the URL query
+                        const videoCallUrl = `/doctors/appointments/${appointmentId}/video-call?role=doctor`;
+                        
+                        // Open in new window with specific dimensions
+                        const videoWindow = window.open(videoCallUrl, 'VideoCall', 'width=1000,height=700,resizable=yes');
+                        
+                        if (!videoWindow || videoWindow.closed || typeof videoWindow.closed === 'undefined') {
+                            // If popup was blocked, notify the user
+                            showToast('Please allow popups to start the video call', 'error');
+                        } else {
+                            showToast('Starting video call...', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Error starting video call:', error);
+                        showToast('Failed to start video call. Please try again.', 'error');
+                    }
+                });
+            });
+            
             // Function to update appointment card actions based on status
             function updateAppointmentCardActions(card, status) {
                 const actionsDiv = card.querySelector('.appointment-actions');
@@ -1420,15 +1713,19 @@
                         prescriptionModal.classList.add('show');
                     });
                     
-                    const meetingBtn = document.createElement('button');
-                    meetingBtn.className = 'btn btn-primary btn-add-link';
-                    meetingBtn.setAttribute('data-id', card.getAttribute('data-id'));
-                    meetingBtn.innerHTML = '<i class="fas fa-video"></i> Add Meeting Link';
-                    meetingBtn.addEventListener('click', function() {
+                    const videoCallBtn = document.createElement('button');
+                    videoCallBtn.className = 'btn btn-primary btn-start-call';
+                    videoCallBtn.setAttribute('data-id', card.getAttribute('data-id'));
+                    videoCallBtn.innerHTML = '<i class="fas fa-video"></i> Start Video Call';
+                    videoCallBtn.addEventListener('click', function() {
                         const appointmentId = this.getAttribute('data-id');
-                        document.getElementById('meetingLinkAppointmentId').value = appointmentId;
-                        document.getElementById('meetingLinkForm').reset();
-                        meetingLinkModal.classList.add('show');
+                        
+                        // Pass doctor role information directly in the URL query
+                        const videoCallUrl = `/doctors/appointments/${appointmentId}/video-call?role=doctor`;
+                        
+                        window.open(videoCallUrl, 'VideoCall', 'width=1000,height=700,resizable=yes');
+                        
+                        showToast(`Starting video call...`, 'success');
                     });
                     
                     const completeBtn = document.createElement('button');
@@ -1454,7 +1751,7 @@
                     });
                     
                     actionsDiv.appendChild(prescriptionBtn);
-                    actionsDiv.appendChild(meetingBtn);
+                    actionsDiv.appendChild(videoCallBtn);
                     actionsDiv.appendChild(completeBtn);
                     actionsDiv.appendChild(cancelBtn);
                 } else if (status === 'Completed') {

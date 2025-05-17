@@ -116,8 +116,18 @@ app.use((err, req, res, next) => {
   res.status(500).send(err.stack);
 });
 
+// Import the HTTP server
+const http = require('http');
+
+// Create HTTP server from Express app
+const server = http.createServer(app);
+
+// Set up socket.io
+const setupSocketServer = require('./socketServer');
+const io = setupSocketServer(server);
+
 // Start Server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
 });

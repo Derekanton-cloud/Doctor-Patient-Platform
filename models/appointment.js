@@ -77,7 +77,19 @@ const appointmentSchema = new mongoose.Schema({
   updatedAt: { 
     type: Date, 
     default: Date.now 
-  }
+  },
+  prescriptions: {
+    type: [
+      {
+        medication: { type: String, required: true },
+        dosage: { type: String, required: true },
+        frequency: { type: String, required: true },
+        duration: { type: String, required: true },
+        notes: { type: String }
+      }
+    ],
+    default: [] // Initialize prescriptions as an empty array by default
+  },
 }, { timestamps: true });
 
 // Index for better performance on common queries
