@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments | Doctor-Patient Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        /* CSS styles similar to patientAppointments.ejs with doctor-specific additions */
+        :root {
+            --primary-color: #047cde;
+            --primary-dark: #0366b5;
+            --secondary-color: #e9f2fb;
+            --accent-color: #4caf50;
+            --text-color: #333333;
+            --text-light: #666666;
+            --bg-color: #f0f8ff;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+            --spacing: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: whitesmoke;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+
+        .navbar-logo img {
+            width: 40px;
+            height: auto;
+        }
+
+        .navbar-logo h1 {
+            font-size: 24px;
+            margin: 0;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .navbar-logo:hover h1 {
+            color: #a4d2ff;
+            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
+        }
+
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .navbar-links a:hover {
+            color: #a4d2ff;
+            transform: translateY(-2px);
+            text-shadow: 0 4px 12px rgba(30, 144, 255, 0.7);
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-button:hover {
+            background: #047cde;
+            color: white;
+            border-color: #047cde;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(4, 124, 222, 0.3);
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-button {
+            background-color: #047cde;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-button:hover {
+            background-color: #0366b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .profile-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a i {
+            color: #047cde;
+            width: 16px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 0;
+        }
+
+        /* Content styles */
+        .page-title {
+            flex: 1;
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .page-title i {
+            color: var(--primary-color);
+        }
+
+        .appointments-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .appointment-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .appointment-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .appointment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .patient-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #4caf50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .patient-img img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .appointment-details {
+            flex-grow: 1;
+        }
+
+        .patient-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 3px;
+        }
+
+        .appointment-status {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .appointment-body {
+            padding: 15px 20px;
+        }
+
+        .appointment-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        .appointment-info i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .appointment-reason {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .appointment-reason h4 {
+            font-size: 16px;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .appointment-reason p {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .appointment-actions {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 3px 8px rgba(4, 124, 222, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #3d8b40;
+            box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            box-shadow: 0 3px 8px rgba(220, 53, 69, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .empty-state p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        /* Status update dropdown */
+        .status-select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        /* Modal for adding prescriptions */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--primary-dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .prescription-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            border-left: 5px solid #28a745;
+        }
+
+        .toast.error {
+            border-left: 5px solid #dc3545;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .toast-icon {
+            background: #f5f5f5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon {
+            color: #28a745;
+        }
+
+        .toast.error .toast-icon {
+            color: #dc3545;
+        }
+
+        .toast-message {
+            flex-grow: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .toast-close {
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .toast-close:hover {
+            background: #f2f2f2;
+        }
+
+        /* Prescriptions list */
+        .prescriptions-list {
+            border-top: 1px solid #f0f0f0;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        .prescriptions-list h4 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-dark);
+        }
+
+        .prescription-item {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .prescription-item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .prescription-item .med-name {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        /* Footer Styles - Matching index.ejs */
+        .footer {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: #fff;
+            padding: 30px 0;
+            position: relative;
+            margin-top: auto;
+            /* Pushes footer to bottom when content is short */
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            width: 40px;
+            height: auto;
+        }
+
+        .footer-logo h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        .footer-section h4 {
+            color: #a4d2ff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p {
+            margin: 5px 0;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .footer-section .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #a4d2ff;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Add this for responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 15px 10px;
+                gap: 10px;
+            }
+
+            .navbar-links {
+                width: 100%;
+                justify-content: space-around;
+                gap: 10px;
+            }
+
+            .prescription-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+        }
+
+        .guest-badge {
+            display: inline-block;
+            background-color: #ff9800;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="navbar-logo">
+            <img src="/assets/logo.png" alt="Logo">
+            <h1>Doctor-Patient Interface</h1>
+        </a>
+        <div class="navbar-links">
+            <a href="/doctors/dashboard" class="nav-button">
+                <i class="fas fa-columns"></i> Dashboard
+            </a>
+            <div class="profile-dropdown">
+                <button class="profile-button">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="/doctors/profile"><i class="fas fa-id-card"></i> View Profile</a>
+                    <a href="/doctors/settings"><i class="fas fa-cog"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-calendar-check"></i> My Patient Appointments
+        </h1>
+
+        <div class="appointments-container">
+            <% if (appointments && appointments.length> 0) { %>
+                <% appointments.forEach(appointment=> { %>
+                    <div class="appointment-card" data-id="<%= appointment._id %>">
+                        <div class="appointment-header">
+                            <div class="patient-img">
+                                <% if (appointment.patient) { %>
+                                    <% if (appointment.patient.profileImage) { %>
+                                        <img src="/<%= appointment.patient.profileImage %>" alt="Patient">
+                                        <% } else { %>
+                                            <i class="fas fa-user"></i>
+                                            <% } %>
+                                                <% } else if (appointment.isGuestBooking) { %>
+                                                    <!-- Guest booking - show a default avatar -->
+                                                    <i class="fas fa-user"></i>
+                                                    <% } else { %>
+                                                        <!-- No patient information available -->
+                                                        <i class="fas fa-user"></i>
+                                                        <% } %>
+                            </div>
+                            <div class="appointment-details">
+                                <h3 class="patient-name">
+                                    <% if (appointment.patient) { %>
+                                        <%= appointment.patient.firstName %>
+                                            <%= appointment.patient.lastName %>
+                                                <% } else if (appointment.isGuestBooking) { %>
+                                                    <%= appointment.guestInformation.name %> <span
+                                                            class="guest-badge">Guest</span>
+                                                        <% } else { %>
+                                                            Unknown Patient
+                                                            <% } %>
+                                </h3>
+                                <p class="appointment-id">Appointment ID: <%= appointment._id.toString().slice(-8) %>
+                                </p>
+                            </div>
+                            <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
+                                <%= appointment.status %>
+                            </span>
+                        </div>
+                        <div class="appointment-body">
+                            <div class="appointment-info">
+                                <i class="far fa-calendar-alt"></i>
+                                <span>
+                                    <%= new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
+                                        weekday: 'long' , year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+                                </span>
+                            </div>
+                            <div class="appointment-info">
+                                <i class="far fa-clock"></i>
+                                <span>
+                                    <%= new Date(appointment.appointmentDate).toLocaleTimeString('en-US', {
+                                        hour: '2-digit' , minute: '2-digit' }) %>
+                                </span>
+                            </div>
+                            <div class="appointment-reason">
+                                <h4>Reason for Visit</h4>
+                                <p>
+                                    <%= appointment.reason %>
+                                </p>
+                            </div>
+
+                            <% if (appointment.prescriptions && appointment.prescriptions.length> 0) { %>
+                                <div class="prescriptions-list">
+                                    <h4><i class="fas fa-prescription"></i> Prescriptions</h4>
+                                    <% appointment.prescriptions.forEach(prescription=> { %>
+                                        <div class="prescription-item">
+                                            <p class="med-name">
+                                                <%= prescription.medication %>
+                                            </p>
+                                            <p><strong>Dosage:</strong>
+                                                <%= prescription.dosage %>
+                                            </p>
+                                            <p><strong>Frequency:</strong>
+                                                <%= prescription.frequency %>
+                                            </p>
+                                            <p><strong>Duration:</strong>
+                                                <%= prescription.duration %>
+                                            </p>
+                                            <% if (prescription.notes) { %>
+                                                <p><strong>Notes:</strong>
+                                                    <%= prescription.notes %>
+                                                </p>
+                                                <% } %>
+                                        </div>
+                                        <% }); %>
+                                </div>
+                                <% } %>
+
+                                    <% if (appointment.notes) { %>
+                                        <div class="appointment-notes">
+                                            <h4>Doctor's Notes</h4>
+                                            <p>
+                                                <%= appointment.notes %>
+                                            </p>
+                                        </div>
+                                        <% } %>
+                        </div>
+                        <div class="appointment-actions">
+                            <% if (appointment.status==='Pending' ) { %>
+                                <button class="btn btn-success btn-confirm" data-id="<%= appointment._id %>">
+                                    <i class="fas fa-check-circle"></i> Confirm
+                                </button>
+                                <% } %>
+
+                                    <% if (['Pending', 'Confirmed' ].includes(appointment.status)) { %>
+                                        <button class="btn btn-danger btn-cancel" data-id="<%= appointment._id %>">
+                                            <i class="fas fa-times-circle"></i> Cancel
+                                        </button>
+                                        <% } %>
+
+                                            <% if (!appointment.meetingLink && appointment.status==='Confirmed' ) { %>
+                                                <button class="btn btn-primary btn-add-link"
+                                                    data-id="<%= appointment._id %>">
+                                                    <i class="fas fa-video"></i> Add Meeting Link
+                                                </button>
+                                                <% } %>
+
+                                                    <% if (appointment.status==='Confirmed' ) { %>
+                                                        <button class="btn btn-primary btn-add-prescription"
+                                                            data-id="<%= appointment._id %>">
+                                                            <i class="fas fa-prescription"></i> Add Prescription
+                                                        </button>
+
+                                                        <% if (appointment.meetingLink) { %>
+                                                            <a href="<%= appointment.meetingLink %>"
+                                                                class="btn btn-primary" target="_blank">
+                                                                <i class="fas fa-video"></i> Join Call
+                                                            </a>
+                                                            <% } %>
+
+                                                                <button class="btn btn-success btn-complete"
+                                                                    data-id="<%= appointment._id %>">
+                                                                    <i class="fas fa-check-double"></i> Complete
+                                                                </button>
+                                                                <% } %>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <i class="far fa-calendar-times"></i>
+                                <h3>No Appointments Found</h3>
+                                <p>You don't have any appointments scheduled. Update your availability to allow patients
+                                    to book appointments with you.</p>
+                                <a href="/doctor/availability" class="btn-browse">Manage Availability</a>
+                            </div>
+                            <% } %>
+        </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div id="prescriptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Prescription</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="prescriptionForm" class="prescription-form">
+                    <input type="hidden" id="prescriptionAppointmentId" name="appointmentId">
+
+                    <div class="form-group">
+                        <label for="medication">Medication</label>
+                        <input type="text" id="medication" name="medication" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dosage">Dosage</label>
+                        <input type="text" id="dosage" name="dosage" class="form-control" required
+                            placeholder="e.g., 500mg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="frequency">Frequency</label>
+                        <input type="text" id="frequency" name="frequency" class="form-control" required
+                            placeholder="e.g., Twice daily">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Duration</label>
+                        <input type="text" id="duration" name="duration" class="form-control" required
+                            placeholder="e.g., 7 days">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="prescriptionNotes">Notes</label>
+                        <textarea id="prescriptionNotes" name="notes" class="form-control" rows="3"
+                            placeholder="Additional instructions"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="cancelPrescription">Cancel</button>
+                <button type="button" class="btn btn-success" id="savePrescription">Save Prescription</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meeting Link Modal -->
+    <div id="meetingLinkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Meeting Link</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="meetingLinkForm" class="meeting-link-form">
+                    <input type="hidden" id="meetingLinkAppointmentId" name="appointmentId">
+
+                    <div class="form-group">
+                        <label for="meetingLink">Video Call Link</label>
+                        <input type="url" id="meetingLink" name="meetingLink" class="form-control" required
+                            placeholder="e.g., https://zoom.us/j/123456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentNotes">Notes for Patient</label>
+                        <textarea id="appointmentNotes" name="notes" class="form-control" rows="3"
+                            placeholder="Any specific instructions for the patient"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="cancelMeetingLink">Cancel</button>
+                <button type="button" class="btn btn-success" id="saveMeetingLink">Save Meeting Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <div class="toast-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="toast-message"></div>
+            <button class="toast-close"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="/assets/logo.png" alt="Logo">
+                    <h3>Doctor-Patient Interface</h3>
+                </div>
+                <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: doctorpatientinterface@gmail.com</p>
+                <p>Phone: 9901527481</p>
+                <p>Address: Shavige Malleshwara Hills, 91st Main Rd, Bengaluru, Karnataka 560078</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <p><a href="/doctors/dashboard" style="color: #999; text-decoration: none;">Dashboard</a></p>
+                <p><a href="/doctors/appointments" style="color: #999; text-decoration: none;">My Appointments</a></p>
+                <p><a href="/doctors/patients" style="color: #999; text-decoration: none;">My Patients</a></p>
+                <p><a href="/doctors/prescriptions" style="color: #999; text-decoration: none;">Prescriptions</a></p>
+                <p><a href="/doctors/medicalrecords" style="color: #999; text-decoration: none;">Medical Records</a></p>
+                <p><a href="/doctors/profile" style="color: #999; text-decoration: none;">Profile</a></p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+            <p>Developed By Team DPI</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Variables for modals
+            const prescriptionModal = document.getElementById('prescriptionModal');
+            const meetingLinkModal = document.getElementById('meetingLinkModal');
+            const modalCloseButtons = document.querySelectorAll('.modal-close');
+
+            // Buttons for different actions
+            const confirmButtons = document.querySelectorAll('.btn-confirm');
+            const cancelButtons = document.querySelectorAll('.btn-cancel');
+            const completeButtons = document.querySelectorAll('.btn-complete');
+            const addPrescriptionButtons = document.querySelectorAll('.btn-add-prescription');
+            const addMeetingLinkButtons = document.querySelectorAll('.btn-add-link');
+
+            // Form submission buttons
+            const savePrescriptionBtn = document.getElementById('savePrescription');
+            const cancelPrescriptionBtn = document.getElementById('cancelPrescription');
+            const saveMeetingLinkBtn = document.getElementById('saveMeetingLink');
+            const cancelMeetingLinkBtn = document.getElementById('cancelMeetingLink');
+
+            // Close modals when clicking the X button
+            modalCloseButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    prescriptionModal.classList.remove('show');
+                    meetingLinkModal.classList.remove('show');
+                });
+            });
+
+            // Close modals when clicking cancel buttons
+            cancelPrescriptionBtn.addEventListener('click', function () {
+                prescriptionModal.classList.remove('show');
+            });
+
+            cancelMeetingLinkBtn.addEventListener('click', function () {
+                meetingLinkModal.classList.remove('show');
+            });
+
+            // Handle appointment confirmation
+            confirmButtons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    const appointmentId = this.getAttribute('data-id');
+                    try {
+                        const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                status: 'Confirmed'
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showToast('Appointment confirmed successfully', 'success');
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showToast(result.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error confirming appointment:', error);
+                        showToast('Failed to confirm appointment', 'error');
+                    }
+                });
+            });
+
+            // Handle appointment cancellation
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    if (confirm('Are you sure you want to cancel this appointment?')) {
+                        const appointmentId = this.getAttribute('data-id');
+                        try {
+                            const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    status: 'Cancelled'
+                                })
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                showToast('Appointment cancelled successfully', 'success');
+                                setTimeout(() => window.location.reload(), 1500);
+                            } else {
+                                showToast(result.message, 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error cancelling appointment:', error);
+                            showToast('Failed to cancel appointment', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Handle appointment completion
+            completeButtons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    if (confirm('Mark this appointment as completed?')) {
+                        const appointmentId = this.getAttribute('data-id');
+                        try {
+                            const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    status: 'Completed'
+                                })
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                showToast('Appointment marked as completed', 'success');
+                                setTimeout(() => window.location.reload(), 1500);
+                            } else {
+                                showToast(result.message, 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error completing appointment:', error);
+                            showToast('Failed to complete appointment', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Open prescription modal
+            addPrescriptionButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const appointmentId = this.getAttribute('data-id');
+                    document.getElementById('prescriptionAppointmentId').value = appointmentId;
+                    document.getElementById('prescriptionForm').reset();
+                    prescriptionModal.classList.add('show');
+                });
+            });
+
+            // Save prescription
+            savePrescriptionBtn.addEventListener('click', async function () {
+                const form = document.getElementById('prescriptionForm');
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const appointmentId = document.getElementById('prescriptionAppointmentId').value;
+                const formData = {
+                    medication: document.getElementById('medication').value,
+                    dosage: document.getElementById('dosage').value,
+                    frequency: document.getElementById('frequency').value,
+                    duration: document.getElementById('duration').value,
+                    notes: document.getElementById('prescriptionNotes').value
+                };
+
+                try {
+                    const response = await fetch(`/doctor/appointments/${appointmentId}/prescribe`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast('Prescription added successfully', 'success');
+                        prescriptionModal.classList.remove('show');
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding prescription:', error);
+                    showToast('Failed to add prescription', 'error');
+                }
+            });
+
+            // Open meeting link modal
+            addMeetingLinkButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const appointmentId = this.getAttribute('data-id');
+                    document.getElementById('meetingLinkAppointmentId').value = appointmentId;
+                    document.getElementById('meetingLinkForm').reset();
+                    meetingLinkModal.classList.add('show');
+                });
+            });
+
+            // Save meeting link
+            saveMeetingLinkBtn.addEventListener('click', async function () {
+                const form = document.getElementById('meetingLinkForm');
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const appointmentId = document.getElementById('meetingLinkAppointmentId').value;
+                const formData = {
+                    meetingLink: document.getElementById('meetingLink').value,
+                    notes: document.getElementById('appointmentNotes').value
+                };
+
+                try {
+                    const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast('Meeting link added successfully', 'success');
+                        meetingLinkModal.classList.remove('show');
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding meeting link:', error);
+                    showToast('Failed to add meeting link', 'error');
+                }
+            });
+
+            // Profile dropdown functionality
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileMenu = document.getElementById('profileMenu');
+
+            if (profileDropdown && profileMenu) {
+                profileDropdown.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    profileMenu.classList.toggle('show');
+                });
+
+                document.addEventListener('click', function () {
+                    if (profileMenu.classList.contains('show')) {
+                        profileMenu.classList.remove('show');
+                    }
+                });
+            }
+
+            // Toast notification
+            const toast = document.getElementById('toast');
+            const toastClose = document.querySelector('.toast-close');
+
+            toastClose.addEventListener('click', function () {
+                toast.classList.remove('show');
+            });
+
+            window.showToast = function (message, type = 'success') {
+                const toastMessage = document.querySelector('.toast-message');
+                const toastIcon = document.querySelector('.toast-icon i');
+
+                toastMessage.textContent = message;
+                toast.className = 'toast ' + type;
+
+                if (type === 'success') {
+                    toastIcon.className = 'fas fa-check';
+                } else {
+                    toastIcon.className = 'fas fa-exclamation-circle';
+                }
+
+                toast.classList.add('show');
+
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            };
+
+            // Check if there's a message in URL params (e.g., after redirect)
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            const type = urlParams.get('type') || 'success';
+
+            if (message) {
+                showToast(decodeURIComponent(message), type);
+
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
+</body>
+
+</html>

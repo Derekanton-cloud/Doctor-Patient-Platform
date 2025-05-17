@@ -4,12 +4,22 @@ const appointmentSchema = new mongoose.Schema({
   patient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    required: false, // Changed to false to support guest bookings
   },
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  // Guest booking fields
+  isGuestBooking: {
+    type: Boolean,
+    default: false
+  },
+  guestInformation: {
+    name: String,
+    email: String,
+    phone: String
   },
   appointmentDate: { 
     type: Date, 
@@ -139,6 +149,13 @@ appointmentSchema.statics.findTodayAppointments = function(doctorId) {
     }
   }).populate('patient', 'firstName lastName email profileImage')
     .sort({ appointmentDate: 1 });
+};
+
+// Static method to find guest bookings
+appointmentSchema.statics.findGuestBookings = function() {
+  return this.find({
+    isGuestBooking: true
+  }).sort({ appointmentDate: 1 });
 };
 
 module.exports = mongoose.model("Appointment", appointmentSchema);

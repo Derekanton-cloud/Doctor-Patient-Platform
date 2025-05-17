@@ -1207,80 +1207,91 @@
       position: relative;
       margin-top: auto;
       /* Pushes footer to bottom when content is short */
-  }
+    }
 
-  .footer-content {
+    .footer-content {
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 40px;
       padding: 0 20px;
-  }
+    }
 
-  .footer-section {
+    .footer-section {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-  }
+    }
 
-  .footer-logo {
+    .footer-logo {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 20px;
-  }
+    }
 
-  .footer-logo img {
+    .footer-logo img {
       width: 40px;
       height: auto;
-  }
+    }
 
-  .footer-logo h3 {
+    .footer-logo h3 {
       font-size: 1.5rem;
       margin: 0;
       color: #fff;
-  }
+    }
 
-  .footer-section h4 {
+    .footer-section h4 {
       color: #a4d2ff;
       margin-bottom: 20px;
       font-size: 1.2rem;
-  }
+    }
 
-  .footer-section p {
+    .footer-section p {
       margin: 5px 0;
       color: #999;
       line-height: 1.6;
-  }
+    }
 
-  .footer-section .social-links {
+    .footer-section .social-links {
       display: flex;
       gap: 15px;
       margin-top: 20px;
-  }
+    }
 
-  .social-links a {
+    .social-links a {
       color: #fff;
       text-decoration: none;
       transition: color 0.3s ease;
-  }
+    }
 
-  .social-links a:hover {
+    .social-links a:hover {
       color: #a4d2ff;
-  }
+    }
 
-  .footer-bottom {
+    .footer-bottom {
       text-align: center;
       margin-top: 40px;
       padding-top: 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
+    }
 
-  .footer-bottom p {
+    .footer-bottom p {
       color: #666;
       font-size: 0.9rem;
-  }
+    }
+
+    .guest-badge {
+      display: inline-block;
+      background-color: #ff9800;
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 
@@ -1430,29 +1441,66 @@
                       minute:'2-digit'}) %>
                 </div>
                 <div class="patient-info">
-                  <% if (appointment.patient.profileImage) { %>
-                    <img src="<%= appointment.patient.profileImage %>" alt="Patient" class="patient-avatar">
-                    <% } else { %>
-                      <div class="patient-avatar"
-                        style="background-color: #e9ecef; display: flex; justify-content: center; align-items: center;">
-                        <i class="fas fa-user" style="color: #adb5bd;"></i>
-                      </div>
-                      <% } %>
-                        <div>
-                          <div class="patient-name">
-                            <%= appointment.patient.firstName %>
-                              <%= appointment.patient.lastName %>
+                  <% if (appointment.isGuestBooking) { %>
+                    <!-- Guest booking - show guest information -->
+                    <div class="patient-avatar">
+                      <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="patient-details">
+                      <h4 class="patient-name">
+                        <%= appointment.guestInformation.name %> <span class="guest-badge">Guest</span>
+                      </h4>
+                      <p class="patient-contact"><i class="fas fa-envelope"></i>
+                        <%= appointment.guestInformation.email %>
+                      </p>
+                      <% if (appointment.guestInformation.phone) { %>
+                        <p class="patient-contact"><i class="fas fa-phone"></i>
+                          <%= appointment.guestInformation.phone %>
+                        </p>
+                        <% } %>
+                    </div>
+                    <% } else if (appointment.patient) { %>
+                      <!-- Regular patient - show patient profile -->
+                      <% if (appointment.patient.profileImage) { %>
+                        <img src="<%= appointment.patient.profileImage %>" alt="Patient" class="patient-avatar">
+                        <% } else { %>
+                          <div class="patient-avatar">
+                            <i class="fas fa-user-circle"></i>
                           </div>
-                          <div class="appointment-type">
-                            <%= appointment.appointmentType %>
-                          </div>
-                        </div>
+                          <% } %>
+                            <div class="patient-details">
+                              <h4 class="patient-name">
+                                <%= appointment.patient.firstName %>
+                                  <%= appointment.patient.lastName %>
+                              </h4>
+                              <p class="patient-contact"><i class="fas fa-envelope"></i>
+                                <%= appointment.patient.email %>
+                              </p>
+                              <% if (appointment.patient.phone) { %>
+                                <p class="patient-contact"><i class="fas fa-phone"></i>
+                                  <%= appointment.patient.phone %>
+                                </p>
+                                <% } %>
+                            </div>
+                            <% } else { %>
+                              <!-- No patient information available -->
+                              <div class="patient-avatar">
+                                <i class="fas fa-user-circle"></i>
+                              </div>
+                              <div class="patient-details">
+                                <h4 class="patient-name">Unknown Patient</h4>
+                                <p class="patient-contact">No information available</p>
+                              </div>
+                              <% } %>
                 </div>
                 <div class="appointment-actions">
-                  <% // Calculate if appointment is active (within 15 minutes buffer) const now=new Date(); const
-                    appointmentTime=new Date(appointment.appointmentDate); const bufferEnd=new Date(appointmentTime);
-                    bufferEnd.setMinutes(bufferEnd.getMinutes() + 15); const isAppointmentActive=now>= appointmentTime
-                    && now <= bufferEnd && appointment.status==='Confirmed' ; %>
+                  <% // Check if the appointment is active (within 15 minutes buffer) 
+                     const now=new Date(); 
+                     const appointmentTime=new Date(appointment.startTime);
+                     const bufferEnd=new Date(appointmentTime);
+                     bufferEnd.setMinutes(bufferEnd.getMinutes() + 15); 
+                     const isAppointmentActive=now>= appointmentTime && now <= bufferEnd && appointment.status==='Confirmed' ;
+                   %>
                       <% if (isAppointmentActive) { %>
                         <a href="/video-call/<%= appointment._id %>" class="appointment-button video-call-btn">
                           <i class="fas fa-video"></i> Join Video Call
@@ -1463,8 +1511,7 @@
                             <i class="fas fa-video"></i> Video Call
                           </button>
                           <% } %>
-                            <a href="/doctors/appointments/<%= appointment._id %>"
-                              class="appointment-button details-btn">Details</a>
+                            <a href="/doctors/appointments/<%= appointment._id %>" class="appointment-button details-btn">Details</a>
                 </div>
               </div>
               <% }) %>
@@ -1768,42 +1815,42 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-        <div class="footer-section">
-            <div class="footer-logo">
-                <img src="/assets/logo.png" alt="Logo">
-                <h3>Doctor-Patient Interface</h3>
-            </div>
-            <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+      <div class="footer-section">
+        <div class="footer-logo">
+          <img src="/assets/logo.png" alt="Logo">
+          <h3>Doctor-Patient Interface</h3>
         </div>
+        <p>Revolutionizing healthcare through seamless connectivity and innovative technology.</p>
+      </div>
 
-        <div class="footer-section">
-            <h4>Contact Us</h4>
-            <p>Email: doctorpatientinterface@gmail.com</p>
-            <p>Phone: 9901527481</p>
-            <p>Address: Shavige Malleshwara Hills, 91st Main Rd, Bengaluru, Karnataka 560078</p>
+      <div class="footer-section">
+        <h4>Contact Us</h4>
+        <p>Email: doctorpatientinterface@gmail.com</p>
+        <p>Phone: 9901527481</p>
+        <p>Address: Shavige Malleshwara Hills, 91st Main Rd, Bengaluru, Karnataka 560078</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <p><a href="/doctors/dashboard" style="color: #999; text-decoration: none;">Dashboard</a></p>
+        <p><a href="/doctors/appointments" style="color: #999; text-decoration: none;">My Appointments</a></p>
+        <p><a href="/doctors/patients" style="color: #999; text-decoration: none;">My Patients</a></p>
+        <p><a href="/doctors/prescriptions" style="color: #999; text-decoration: none;">Prescriptions</a></p>
+        <p><a href="/doctors/medicalrecords" style="color: #999; text-decoration: none;">Medical Records</a></p>
+        <p><a href="/doctors/profile" style="color: #999; text-decoration: none;">Profile</a></p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
         </div>
-
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <p><a href="/doctors/dashboard" style="color: #999; text-decoration: none;">Dashboard</a></p>
-          <p><a href="/doctors/appointments" style="color: #999; text-decoration: none;">My Appointments</a></p>
-          <p><a href="/doctors/patients" style="color: #999; text-decoration: none;">My Patients</a></p>
-          <p><a href="/doctors/prescriptions" style="color: #999; text-decoration: none;">Prescriptions</a></p>
-          <p><a href="/doctors/medicalrecords" style="color: #999; text-decoration: none;">Medical Records</a></p>
-          <p><a href="/doctors/profile" style="color: #999; text-decoration: none;">Profile</a></p>
-          <div class="social-links">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-          </div>
       </div>
     </div>
     <div class="footer-bottom">
-        <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
-        <p>Developed By Team DPI</p>
+      <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+      <p>Developed By Team DPI</p>
     </div>
-</footer>
+  </footer>
 
   <!-- JavaScript for Interactivity -->
   <script>

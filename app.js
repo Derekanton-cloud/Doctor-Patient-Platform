@@ -111,6 +111,11 @@ app.use((req, res) => {
   res.status(404).render('error', { message: 'Page not found' });
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send(err.stack);
+});
+
 // Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

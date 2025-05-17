@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment Confirmation | Doctor-Patient Interface</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #abdded, #92e1e9);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      color: whitesmoke;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+    }
+
+    .navbar-logo img {
+      width: 40px;
+      height: auto;
+    }
+
+    .navbar-logo h1 {
+      font-size: 24px;
+      margin: 0;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 3rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .confirmation-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      text-align: center;
+      animation: fadeInUp 0.5s;
+    }
+
+    .confirmation-icon {
+      margin-bottom: 1.5rem;
+      color: #28a745;
+      font-size: 4rem;
+    }
+
+    .confirmation-title {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .confirmation-message {
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .appointment-details {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .detail-item {
+      display: flex;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+
+    .detail-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-icon {
+      color: #047cde;
+      margin-right: 15px;
+      font-size: 1.2rem;
+      width: 20px;
+      text-align: center;
+      margin-top: 3px;
+    }
+
+    .detail-content {
+      flex: 1;
+    }
+
+    .detail-label {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 3px;
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .btn {
+      padding: 0.8rem 1.8rem;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #047cde;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0366b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(4, 124, 222, 0.3);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Footer Styles */
+    .footer {
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      color: #fff;
+      padding: 20px 0;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer-bottom p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">
+      <img src="/assets/logo.png" alt="Logo">
+      <h1>Doctor-Patient Interface</h1>
+    </a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="confirmation-card">
+      <div class="confirmation-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h1 class="confirmation-title">Appointment Confirmed!</h1>
+      <p class="confirmation-message">
+        <%= message || 'Your appointment request has been received. We will confirm your appointment shortly.' %>
+      </p>
+
+      <div class="appointment-details">
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-user-md"></i>
+          </div>
+          <div class="detail-content">
+            <div class="detail-label">Doctor</div>
+            <div class="detail-value"><%= appointmentData.doctorName %></div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <div class="detail-content">
+            <div class="detail-label">Date</div>
+            <div class="detail-value"><%= appointmentData.date %></div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="detail-content">
+            <div class="detail-label">Time</div>
+            <div class="detail-value"><%= appointmentData.time %></div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-comment-medical"></i>
+          </div>
+          <div class="detail-content">
+            <div class="detail-label">Reason</div>
+            <div class="detail-value"><%= appointmentData.reason %></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="confirmation-message">
+        We've sent a confirmation email with these details.<br>
+        Please arrive 15 minutes before your scheduled appointment time.
+      </p>
+
+      <div class="buttons-container">
+        <a href="/" class="btn btn-primary">
+          <i class="fas fa-home"></i> Return to Homepage
+        </a>
+        <a href="/patient/dashboard" class="btn btn-secondary">
+          <i class="fas fa-search"></i> Browse More Doctors
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-bottom">
+        <p>&copy; 2025 Doctor-Patient Interface. All Rights Reserved.</p>
+        <p>Developed By Team DPI</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
