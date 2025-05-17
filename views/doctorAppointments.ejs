@@ -1099,7 +1099,7 @@
                 button.addEventListener('click', async function () {
                     const appointmentId = this.getAttribute('data-id');
                     try {
-                        const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                        const response = await fetch(`/doctors/appointments/${appointmentId}/update`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -1113,7 +1113,21 @@
 
                         if (result.success) {
                             showToast('Appointment confirmed successfully', 'success');
-                            setTimeout(() => window.location.reload(), 1500);
+                            
+                            // Update the appointment card status without reloading the page
+                            const appointmentCard = document.querySelector(`.appointment-card[data-id="${appointmentId}"]`);
+                            const statusSpan = appointmentCard.querySelector('.appointment-status');
+                            
+                            if (statusSpan) {
+                                statusSpan.className = 'appointment-status status-confirmed';
+                                statusSpan.textContent = 'Confirmed';
+                            }
+                            
+                            // Update the appointment card actions
+                            updateAppointmentCardActions(appointmentCard, 'Confirmed');
+                            
+                            // Update dashboard counts via AJAX to ensure consistency
+                            updateDashboardCounts();
                         } else {
                             showToast(result.message, 'error');
                         }
@@ -1130,7 +1144,7 @@
                     if (confirm('Are you sure you want to cancel this appointment?')) {
                         const appointmentId = this.getAttribute('data-id');
                         try {
-                            const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                            const response = await fetch(`/doctors/appointments/${appointmentId}/update`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -1144,7 +1158,23 @@
 
                             if (result.success) {
                                 showToast('Appointment cancelled successfully', 'success');
-                                setTimeout(() => window.location.reload(), 1500);
+
+                                // Remove the appointment card with animation
+                                const appointmentCard = document.querySelector(`.appointment-card[data-id="${appointmentId}"]`);
+                                if (appointmentCard) {
+                                    appointmentCard.style.opacity = '0';
+                                    appointmentCard.style.transform = 'translateY(-20px)';
+
+                                    setTimeout(() => {
+                                        appointmentCard.remove();
+
+                                        // Check if there are no more appointments
+                                        const remainingCards = document.querySelectorAll('.appointment-card');
+                                        if (remainingCards.length === 0) {
+                                            showEmptyState();
+                                        }
+                                    }, 500);
+                                }
                             } else {
                                 showToast(result.message, 'error');
                             }
@@ -1162,7 +1192,7 @@
                     if (confirm('Mark this appointment as completed?')) {
                         const appointmentId = this.getAttribute('data-id');
                         try {
-                            const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                            const response = await fetch(`/doctors/appointments/${appointmentId}/update`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -1176,7 +1206,28 @@
 
                             if (result.success) {
                                 showToast('Appointment marked as completed', 'success');
-                                setTimeout(() => window.location.reload(), 1500);
+                                
+                                // Apply buffer time before removing the appointment
+                                const appointmentCard = document.querySelector(`.appointment-card[data-id="${appointmentId}"]`);
+                                
+                                if (appointmentCard) {
+                                    const statusSpan = appointmentCard.querySelector('.appointment-status');
+                                    
+                                    if (statusSpan) {
+                                        statusSpan.className = 'appointment-status status-completed';
+                                        statusSpan.textContent = 'Completed';
+                                    }
+                                    
+                                    // Update the appointment card actions
+                                    updateAppointmentCardActions(appointmentCard, 'Completed');
+                                    
+                                    // Keep the appointment visible for a buffer period (24 hours)
+                                    // In a real app, this would be handled server-side with a background job
+                                    // For now, we'll just update the UI
+                                }
+                                
+                                // Update dashboard counts
+                                updateDashboardCounts();
                             } else {
                                 showToast(result.message, 'error');
                             }
@@ -1217,7 +1268,7 @@
                 };
 
                 try {
-                    const response = await fetch(`/doctor/appointments/${appointmentId}/prescribe`, {
+                    const response = await fetch(`/doctors/appointments/${appointmentId}/prescribe`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1266,7 +1317,7 @@
                 };
 
                 try {
-                    const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                    const response = await fetch(`/doctors/appointments/${appointmentId}/update`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1346,6 +1397,118 @@
                 // Clean URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
+
+            // Function to update appointment card actions based on status
+            function updateAppointmentCardActions(card, status) {
+                const actionsDiv = card.querySelector('.appointment-actions');
+                
+                if (!actionsDiv) return;
+                
+                // Clear existing buttons
+                actionsDiv.innerHTML = '';
+                
+                if (status === 'Confirmed') {
+                    // Add appropriate buttons for confirmed status
+                    const prescriptionBtn = document.createElement('button');
+                    prescriptionBtn.className = 'btn btn-primary btn-add-prescription';
+                    prescriptionBtn.setAttribute('data-id', card.getAttribute('data-id'));
+                    prescriptionBtn.innerHTML = '<i class="fas fa-prescription"></i> Add Prescription';
+                    prescriptionBtn.addEventListener('click', function() {
+                        const appointmentId = this.getAttribute('data-id');
+                        document.getElementById('prescriptionAppointmentId').value = appointmentId;
+                        document.getElementById('prescriptionForm').reset();
+                        prescriptionModal.classList.add('show');
+                    });
+                    
+                    const meetingBtn = document.createElement('button');
+                    meetingBtn.className = 'btn btn-primary btn-add-link';
+                    meetingBtn.setAttribute('data-id', card.getAttribute('data-id'));
+                    meetingBtn.innerHTML = '<i class="fas fa-video"></i> Add Meeting Link';
+                    meetingBtn.addEventListener('click', function() {
+                        const appointmentId = this.getAttribute('data-id');
+                        document.getElementById('meetingLinkAppointmentId').value = appointmentId;
+                        document.getElementById('meetingLinkForm').reset();
+                        meetingLinkModal.classList.add('show');
+                    });
+                    
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'btn btn-success btn-complete';
+                    completeBtn.setAttribute('data-id', card.getAttribute('data-id'));
+                    completeBtn.innerHTML = '<i class="fas fa-check-double"></i> Complete';
+                    completeBtn.addEventListener('click', function() {
+                        if (confirm('Mark this appointment as completed?')) {
+                            const appointmentId = this.getAttribute('data-id');
+                            updateAppointmentStatus(appointmentId, 'Completed');
+                        }
+                    });
+                    
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.className = 'btn btn-danger btn-cancel';
+                    cancelBtn.setAttribute('data-id', card.getAttribute('data-id'));
+                    cancelBtn.innerHTML = '<i class="fas fa-times-circle"></i> Cancel';
+                    cancelBtn.addEventListener('click', function() {
+                        if (confirm('Are you sure you want to cancel this appointment?')) {
+                            const appointmentId = this.getAttribute('data-id');
+                            updateAppointmentStatus(appointmentId, 'Cancelled');
+                        }
+                    });
+                    
+                    actionsDiv.appendChild(prescriptionBtn);
+                    actionsDiv.appendChild(meetingBtn);
+                    actionsDiv.appendChild(completeBtn);
+                    actionsDiv.appendChild(cancelBtn);
+                } else if (status === 'Completed') {
+                    // For completed appointments, maybe just show a "View Details" button
+                    const viewDetailsBtn = document.createElement('button');
+                    viewDetailsBtn.className = 'btn btn-primary';
+                    viewDetailsBtn.innerHTML = '<i class="fas fa-eye"></i> View Details';
+                    actionsDiv.appendChild(viewDetailsBtn);
+                }
+            }
+            
+            // Function to update appointment status
+            async function updateAppointmentStatus(appointmentId, status) {
+                try {
+                    const response = await fetch(`/doctors/appointments/${appointmentId}/update`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to update appointment: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert(`Appointment ${status.toLowerCase()} successfully`);
+                        location.reload(); // Reload the page to reflect changes
+                    } else {
+                        alert(`Error: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error updating appointment:', error);
+                    alert('An error occurred while updating the appointment. Please try again.');
+                }
+            }
+
+            // Attach event listeners to Confirm and Cancel buttons
+            document.querySelectorAll('.confirm-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const appointmentId = button.dataset.appointmentId;
+                    updateAppointmentStatus(appointmentId, 'Confirmed');
+                });
+            });
+
+            document.querySelectorAll('.cancel-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const appointmentId = button.dataset.appointmentId;
+                    updateAppointmentStatus(appointmentId, 'Cancelled');
+                });
+            });
         });
     </script>
 </body>

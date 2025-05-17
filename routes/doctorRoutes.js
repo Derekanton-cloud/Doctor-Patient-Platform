@@ -48,34 +48,47 @@ router.get('/appointments', async (req, res) => {
   }
 });
 
-// Update appointment status
-router.post('/appointments/:id/update', authenticateUser, isDoctor, async (req, res) => {
+// Update this route to remove authentication and authorization
+router.post('/appointments/:id/update', async (req, res) => {
   try {
-    const { status, meetingLink, notes } = req.body;
-    
-    const appointment = await Appointment.findOne({ 
-      _id: req.params.id,
-      doctor: req.user.id
-    });
-    
+    const appointmentId = req.params.id;
+    const { status } = req.body;
+
+    // Validate the status
+    if (!['Confirmed', 'Cancelled'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
+
+    // Find the appointment
+    const appointment = await Appointment.findById(appointmentId);
+
     if (!appointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found' });
     }
-    
-    // Update appointment properties
-    if (status) appointment.status = status;
-    if (meetingLink) appointment.meetingLink = meetingLink;
-    if (notes) appointment.notes = notes;
-    
+
+    // Update the appointment status
+    appointment.status = status;
+
+    // If cancelling, record cancellation details
+    if (status === 'Cancelled') {
+      appointment.cancellationDetails = {
+        cancelledBy: 'doctor', // Assuming the doctor is cancelling
+        cancelledAt: new Date(),
+        reason: req.body.reason || 'No reason provided'
+      };
+    }
+
+    // Save the updated appointment
     await appointment.save();
-    
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Appointment updated successfully' 
+
+    return res.json({
+      success: true,
+      message: `Appointment ${status.toLowerCase()} successfully`,
+      appointment
     });
   } catch (error) {
     console.error('Error updating appointment:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    return res.status(500).json({ success: false, message: 'Error updating appointment' });
   }
 });
 
@@ -265,6 +278,84 @@ router.post('/:doctorId/book-appointment', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Fix the /dashboard/counts route to allow access without authentication or authorization
+router.get('/dashboard/counts', async (req, res) => {
+  try {
+    const doctorId = req.query.doctorId; // Accept doctorId as a query parameter
+    const currentDate = new Date();
+
+    if (!doctorId) {
+      return res.status(400).json({ success: false, message: 'Doctor ID is required' });
+    }
+
+    // Get start and end of today
+    const startOfDay = new Date(currentDate);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(currentDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Calculate today's appointments
+    const todayAppointments = await Appointment.countDocuments({
+      doctor: doctorId,
+      appointmentDate: {
+        $gte: startOfDay,
+        $lte: endOfDay
+      },
+      status: { $nin: ['Cancelled'] }
+    });
+
+    // Calculate total patients (unique patients who have had appointments with this doctor)
+    const totalPatients = await Appointment.distinct('patient', {
+      doctor: doctorId,
+      patient: { $exists: true, $ne: null }
+    }).then(patients => patients.length);
+
+    // Calculate total prescriptions issued
+    const totalPrescriptions = await Appointment.aggregate([
+      { $match: { doctor: doctorId } },
+      { $project: { prescriptionCount: { $size: { $ifNull: ["$prescriptions", []] } } } },
+      { $group: { _id: null, total: { $sum: "$prescriptionCount" } } }
+    ]);
+
+    const prescriptionsIssued = totalPrescriptions.length > 0 ? totalPrescriptions[0].total : 0;
+
+    // Calculate completed sessions
+    const completedSessions = await Appointment.countDocuments({
+      doctor: doctorId,
+      status: 'Completed'
+    });
+
+    // Return the updated counts
+    return res.json({
+      success: true,
+      counts: {
+        todayAppointments,
+        totalPatients,
+        prescriptionsIssued,
+        completedSessions
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard counts:', error);
+    return res.status(500).json({ success: false, message: 'Error updating dashboard counts' });
+  }
+});
+
+// API route to fetch appointments for any user (no authentication or authorization required)
+router.get('/api/appointments', async (req, res) => {
+  try {
+    const appointments = await Appointment.find()
+      .populate('patient', 'firstName lastName profileImage')
+      .sort({ appointmentDate: 1 });
+
+    res.json({ success: true, appointments });
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    res.status(500).json({ success: false, message: 'Error fetching appointments' });
   }
 });
 

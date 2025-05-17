@@ -521,137 +521,22 @@
       color: #333;
     }
 
-    .appointment-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 1rem;
+    .appointment-content {
+      display: none;
     }
 
-    .appointment-card {
-      border: 1px solid #e9ecef;
-      border-radius: 12px;
-      padding: 1.2rem;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
+    .appointment-content.active {
+      display: block;
     }
 
-    .appointment-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      border-color: #047cde;
-    }
-
-    .appointment-status {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 70px;
-      height: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .status-confirmed {
-      background-color: #4CAF50;
-    }
-
-    .status-pending {
-      background-color: #FF9800;
-    }
-
-    .status-completed {
-      background-color: #9E9E9E;
-    }
-
-    .status-cancelled {
-      background-color: #F44336;
-    }
-
-    .appointment-time {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-      color: #666;
-      font-size: 0.9rem;
-    }
-
-    .appointment-time i {
-      margin-right: 5px;
-      color: #047cde;
-    }
-
-    .patient-info {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .patient-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      margin-right: 1rem;
-      object-fit: cover;
-    }
-
-    .patient-name {
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-
-    .appointment-type {
-      color: #666;
-      font-size: 0.85rem;
-    }
-
-    .appointment-actions {
-      display: flex;
-      justify-content: space-between;
+    .appointments-list {
       margin-top: 1rem;
     }
 
-    .appointment-button {
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: all 0.3s;
-    }
-
-    .video-call-btn {
-      background-color: #4CAF50;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .video-call-btn:hover {
-      background-color: #388E3C;
-      transform: translateY(-2px);
-    }
-
-    .video-call-btn.disabled {
-      background-color: #e9ecef;
-      color: #adb5bd;
-      cursor: not-allowed;
-    }
-
-    .details-btn {
-      background-color: transparent;
-      color: #047cde;
-      border: 1px solid #047cde;
-    }
-
-    .details-btn:hover {
-      background-color: #f8f9fa;
-      transform: translateY(-2px);
+    .no-appointments-message {
+      text-align: center;
+      color: #999;
+      padding: 1rem;
     }
 
     /* Patient Table Styles */
@@ -1292,6 +1177,60 @@
       margin-left: 8px;
       vertical-align: middle;
     }
+
+    /* Appointment Section - New Styles */
+    .appointment-section {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.8s 0.7s both;
+    }
+
+    .appointment-tabs {
+      display: flex;
+      border-bottom: 1px solid #e9ecef;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab {
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .tab.active {
+      border-bottom: 2px solid #047cde;
+      color: #047cde;
+    }
+
+    .tab:hover:not(.active) {
+      color: #333;
+    }
+
+    .appointment-content {
+      display: none;
+    }
+
+    .appointment-content.active {
+      display: block;
+    }
+
+    .appointments-list {
+      margin-top: 1rem;
+    }
+
+    .no-appointments-message {
+      text-align: center;
+      color: #999;
+      padding: 1rem;
+    }
+
+    /* End of New Styles */
   </style>
 </head>
 
@@ -1378,7 +1317,7 @@
           <div class="stat-icon">
             <i class="fas fa-calendar-check"></i>
           </div>
-          <div class="stat-value">
+          <div class="stat-value" id="today-appointments-count">
             <%= stats.todayAppointments %>
           </div>
           <div class="stat-label">Today's Appointments</div>
@@ -1387,7 +1326,7 @@
           <div class="stat-icon">
             <i class="fas fa-users"></i>
           </div>
-          <div class="stat-value">
+          <div class="stat-value" id="total-patients-count">
             <%= stats.totalPatients %>
           </div>
           <div class="stat-label">Total Patients</div>
@@ -1396,7 +1335,7 @@
           <div class="stat-icon">
             <i class="fas fa-file-prescription"></i>
           </div>
-          <div class="stat-value">
+          <div class="stat-value" id="prescriptions-count">
             <%= stats.prescriptionsIssued %>
           </div>
           <div class="stat-label">Prescriptions Issued</div>
@@ -1406,125 +1345,57 @@
           <div class="stat-icon">
             <i class="fas fa-check-circle"></i>
           </div>
-          <div class="stat-value">
+          <div class="stat-value" id="completed-sessions-count">
             <%= stats.completedAppointments %>
           </div>
           <div class="stat-label">Completed Sessions</div>
         </div>
       </div>
 
-      <!-- Appointments Section -->
-      <section class="appointments-section">
+      <!-- Today's Appointments Section -->
+      <div class="appointment-section">
         <div class="section-header">
-          <h2 class="section-title">Today's Appointments</h2>
+          <h3>Today's Appointments</h3>
           <a href="/doctors/appointments" class="see-all">See all <i class="fas fa-chevron-right"></i></a>
         </div>
 
-        <div class="appointments-tabs">
-          <div class="tab active" data-tab="upcoming">Upcoming</div>
-          <div class="tab" data-tab="today">Today</div>
-          <div class="tab" data-tab="pending">Pending</div>
+        <div class="appointment-tabs">
+          <div class="tab active" data-tab="today">Today</div>
+          <div class="tab" data-tab="upcoming">Upcoming</div>
           <div class="tab" data-tab="completed">Completed</div>
+          <div class="tab" data-tab="cancelled">Cancelled</div>
         </div>
 
-        <div class="appointment-cards">
-          <% if (appointments && appointments.length> 0) { %>
-            <% appointments.forEach(appointment=> { %>
-              <div class="appointment-card">
-                <div class="appointment-status <%= 'status-' + appointment.status.toLowerCase() %>">
-                  <%= appointment.status %>
-                </div>
-                <div class="appointment-time">
-                  <i class="far fa-clock"></i>
-                  <%= new Date(appointment.appointmentDate).toLocaleDateString() %>
-                    at <%= new Date(appointment.appointmentDate).toLocaleTimeString([], {hour: '2-digit' ,
-                      minute:'2-digit'}) %>
-                </div>
-                <div class="patient-info">
-                  <% if (appointment.isGuestBooking) { %>
-                    <!-- Guest booking - show guest information -->
-                    <div class="patient-avatar">
-                      <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="patient-details">
-                      <h4 class="patient-name">
-                        <%= appointment.guestInformation.name %> <span class="guest-badge">Guest</span>
-                      </h4>
-                      <p class="patient-contact"><i class="fas fa-envelope"></i>
-                        <%= appointment.guestInformation.email %>
-                      </p>
-                      <% if (appointment.guestInformation.phone) { %>
-                        <p class="patient-contact"><i class="fas fa-phone"></i>
-                          <%= appointment.guestInformation.phone %>
-                        </p>
-                        <% } %>
-                    </div>
-                    <% } else if (appointment.patient) { %>
-                      <!-- Regular patient - show patient profile -->
-                      <% if (appointment.patient.profileImage) { %>
-                        <img src="<%= appointment.patient.profileImage %>" alt="Patient" class="patient-avatar">
-                        <% } else { %>
-                          <div class="patient-avatar">
-                            <i class="fas fa-user-circle"></i>
-                          </div>
-                          <% } %>
-                            <div class="patient-details">
-                              <h4 class="patient-name">
-                                <%= appointment.patient.firstName %>
-                                  <%= appointment.patient.lastName %>
-                              </h4>
-                              <p class="patient-contact"><i class="fas fa-envelope"></i>
-                                <%= appointment.patient.email %>
-                              </p>
-                              <% if (appointment.patient.phone) { %>
-                                <p class="patient-contact"><i class="fas fa-phone"></i>
-                                  <%= appointment.patient.phone %>
-                                </p>
-                                <% } %>
-                            </div>
-                            <% } else { %>
-                              <!-- No patient information available -->
-                              <div class="patient-avatar">
-                                <i class="fas fa-user-circle"></i>
-                              </div>
-                              <div class="patient-details">
-                                <h4 class="patient-name">Unknown Patient</h4>
-                                <p class="patient-contact">No information available</p>
-                              </div>
-                              <% } %>
-                </div>
-                <div class="appointment-actions">
-                  <% // Check if the appointment is active (within 15 minutes buffer) 
-                     const now=new Date(); 
-                     const appointmentTime=new Date(appointment.startTime);
-                     const bufferEnd=new Date(appointmentTime);
-                     bufferEnd.setMinutes(bufferEnd.getMinutes() + 15); 
-                     const isAppointmentActive=now>= appointmentTime && now <= bufferEnd && appointment.status==='Confirmed' ;
-                   %>
-                      <% if (isAppointmentActive) { %>
-                        <a href="/video-call/<%= appointment._id %>" class="appointment-button video-call-btn">
-                          <i class="fas fa-video"></i> Join Video Call
-                        </a>
-                        <% } else { %>
-                          <button class="appointment-button video-call-btn disabled" disabled
-                            title="Video call is only available at the scheduled appointment time">
-                            <i class="fas fa-video"></i> Video Call
-                          </button>
-                          <% } %>
-                            <a href="/doctors/appointments/<%= appointment._id %>" class="appointment-button details-btn">Details</a>
-                </div>
-              </div>
-              <% }) %>
-                <% } else { %>
-                  <div class="empty-state">
-                    <div class="empty-icon">
-                      <i class="far fa-calendar"></i>
-                    </div>
-                    <p>No appointments scheduled for today.</p>
-                  </div>
-                  <% } %>
+        <div class="appointment-content">
+          <div id="today-content" class="tab-content active">
+            <div id="today-appointments-list" class="appointments-list">
+              <!-- Today's appointments will be populated here -->
+              <div class="no-appointments-message">No appointments for today</div>
+            </div>
+          </div>
+          
+          <div id="upcoming-content" class="tab-content">
+            <div id="upcoming-appointments-list" class="appointments-list">
+              <!-- Upcoming appointments will be populated here -->
+              <div class="no-appointments-message">No upcoming appointments</div>
+            </div>
+          </div>
+          
+          <div id="completed-content" class="tab-content">
+            <div id="completed-appointments-list" class="appointments-list">
+              <!-- Completed appointments will be populated here -->
+              <div class="no-appointments-message">No completed appointments</div>
+            </div>
+          </div>
+          
+          <div id="cancelled-content" class="tab-content">
+            <div id="cancelled-appointments-list" class="appointments-list">
+              <!-- Cancelled appointments will be populated here -->
+              <div class="no-appointments-message">No cancelled appointments</div>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
 
       <!-- Recent Patients Section -->
       <section class="patients-section">
@@ -1939,6 +1810,259 @@
     // Check appointment status periodically
     setInterval(checkAppointmentActive, 30000); // Check every 30 seconds
     checkAppointmentActive(); // Check on page load
+
+    // Function to update dashboard metrics with new counts
+    function updateDashboardMetrics(counts) {
+      if (!counts) return;
+
+      // Update the dashboard counters
+      const todayApptsElem = document.getElementById('today-appointments-count');
+      const totalPatientsElem = document.getElementById('total-patients-count');
+      const prescriptionsElem = document.getElementById('prescriptions-count');
+      const completedSessionsElem = document.getElementById('completed-sessions-count');
+
+      if (todayApptsElem) todayApptsElem.textContent = counts.todayAppointments;
+      if (totalPatientsElem) totalPatientsElem.textContent = counts.totalPatients;
+      if (prescriptionsElem) prescriptionsElem.textContent = counts.prescriptionsIssued;
+      if (completedSessionsElem) completedSessionsElem.textContent = counts.completedSessions;
+    }
+
+    // Setup WebSocket or periodic refresh to update dashboard counts
+    function setupDashboardUpdates() {
+      const doctorId = '<%= user._id %>'; // Pass the logged-in doctor's ID from the server
+
+      if (!doctorId) {
+        console.error('Doctor ID is missing. Cannot fetch dashboard counts.');
+        return;
+      }
+
+      // Option 1: Periodically refresh counts (every 1-5 minutes)
+      setInterval(() => {
+        fetch(`/doctors/dashboard/counts?doctorId=${doctorId}`) // Include doctorId in the query
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to fetch counts: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+              updateDashboardMetrics(data.counts);
+            } else {
+              console.error('Error fetching updated counts:', data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching updated counts:', error);
+          });
+      }, 60000); // Refresh every minute
+
+      // Initial fetch on page load
+      fetch(`/doctors/dashboard/counts?doctorId=${doctorId}`) // Include doctorId in the query
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch counts: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            updateDashboardMetrics(data.counts);
+          } else {
+            console.error('Error fetching updated counts:', data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching updated counts:', error);
+        });
+    }
+
+    // Initialize the dashboard updates when the page loads
+    document.addEventListener('DOMContentLoaded', setupDashboardUpdates);
+
+    // Handle messages from appointment page when changes are made
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'appointment-updated') {
+        // Refresh dashboard counts
+        fetch('/doctor/dashboard/counts')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              updateDashboardMetrics(data.counts);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching updated counts:', error);
+          });
+      }
+    });
+
+    // Appointment handling script
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.appointment-tabs .tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabType = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabType}-content`).classList.add('active');
+            });
+        });
+
+        // Function to fetch all appointments
+        async function fetchAppointments() {
+            try {
+                const response = await fetch('/doctors/api/appointments'); // Updated endpoint
+                
+                if (!response.ok) {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log("Appointments fetched:", data.appointments);
+                    sortAndDisplayAppointments(data.appointments);
+                } else {
+                    console.error('Failed to fetch appointments:', data.message);
+                    // Show error message in all tabs
+                    ['today', 'upcoming', 'completed', 'cancelled'].forEach(tab => {
+                        document.getElementById(`${tab}-appointments-list`).innerHTML = 
+                            `<div class="no-appointments-message">Could not load appointments. ${data.message || 'Please try again later.'}</div>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching appointments:', error);
+                // Show error message in all tabs
+                ['today', 'upcoming', 'completed', 'cancelled'].forEach(tab => {
+                    document.getElementById(`${tab}-appointments-list`).innerHTML = 
+                        `<div class="no-appointments-message">Error loading appointments. Please check your connection and try again.</div>`;
+                });
+            }
+        }
+        
+        // Function to sort and display appointments in appropriate tabs
+        function sortAndDisplayAppointments(appointments) {
+            // Clear all appointment lists
+            document.getElementById('today-appointments-list').innerHTML = '';
+            document.getElementById('upcoming-appointments-list').innerHTML = '';
+            document.getElementById('completed-appointments-list').innerHTML = '';
+            document.getElementById('cancelled-appointments-list').innerHTML = '';
+            
+            // Get today's date for comparison
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Set to start of day for proper comparison
+            
+            // Counter for each category
+            let todayCount = 0;
+            let upcomingCount = 0;
+            let completedCount = 0;
+            let cancelledCount = 0;
+            
+            if (appointments && appointments.length > 0) {
+              appointments.forEach(appointment => {
+                const appointmentDate = new Date(appointment.date);
+                appointmentDate.setHours(0, 0, 0, 0); // Set to start of day for proper comparison
+                
+                const appointmentElement = createAppointmentElement(appointment);
+                
+                if (appointment.status === 'completed') {
+                  // Completed appointments
+                  document.getElementById('completed-appointments-list').appendChild(appointmentElement);
+                  completedCount++;
+                } else if (appointment.status === 'cancelled') {
+                  // Cancelled appointments
+                  document.getElementById('cancelled-appointments-list').appendChild(appointmentElement);
+                  cancelledCount++;
+                } else if (appointmentDate.getTime() === today.getTime()) {
+                  // Today's appointments (not cancelled or completed)
+                  document.getElementById('today-appointments-list').appendChild(appointmentElement);
+                  todayCount++;
+                } else if (appointmentDate > today) {
+                  // Upcoming appointments (future dates, not cancelled or completed)
+                  document.getElementById('upcoming-appointments-list').appendChild(appointmentElement);
+                  upcomingCount++;
+                }
+              });
+            }
+            
+            // Update counts and show "no appointments" message if needed
+            updateTabContent('today', todayCount);
+            updateTabContent('upcoming', upcomingCount);
+            updateTabContent('completed', completedCount);
+            updateTabContent('cancelled', cancelledCount);
+            
+            // Update counter in the dashboard stats
+            const todayApptsElement = document.getElementById('today-appointments-count');
+            if (todayApptsElement) {
+              todayApptsElement.textContent = todayCount;
+            }
+          }
+          
+          // Helper function to update tab content
+          function updateTabContent(tabId, count) {
+            const container = document.getElementById(`${tabId}-appointments-list`);
+            if (count === 0) {
+              // Show no appointments message
+              container.innerHTML = `<div class="no-appointments-message">No ${tabId === 'upcoming' ? 'upcoming' : tabId} appointments</div>`;
+            }
+          }
+          
+          // Function to create appointment element
+          function createAppointmentElement(appointment) {
+            // Create HTML for an appointment card
+            const appointmentCard = document.createElement('div');
+            appointmentCard.className = `appointment-card ${appointment.status || ''}`;
+            
+            // Format the appointment date and time
+            const appointmentDate = new Date(appointment.date);
+            const formattedDate = appointmentDate.toLocaleDateString();
+            
+            appointmentCard.innerHTML = `
+              <div class="appointment-time">
+                <i class="far fa-clock"></i>
+                ${appointment.time || '12:00 PM'}
+              </div>
+              <div class="appointment-details">
+                <h4 class="patient-name">${appointment.patientName || 'Patient Name'}</h4>
+                <div class="appointment-info">
+                  <span><i class="far fa-calendar"></i> ${formattedDate}</span>
+                  <span class="appointment-type">${appointment.appointmentType || 'General Check-up'}</span>
+                </div>
+              </div>
+              <div class="appointment-actions">
+                <a href="/doctors/appointments/${appointment._id}" class="details-btn">Details</a>
+              </div>
+            `;
+            
+            // Add status badge if cancelled or completed
+            if (appointment.status === 'cancelled') {
+              const statusBadge = document.createElement('div');
+              statusBadge.className = 'status-badge cancelled';
+              statusBadge.textContent = 'CANCELLED';
+              appointmentCard.appendChild(statusBadge);
+            } else if (appointment.status === 'completed') {
+              const statusBadge = document.createElement('div');
+              statusBadge.className = 'status-badge completed';
+              statusBadge.textContent = 'COMPLETED';
+              appointmentCard.appendChild(statusBadge);
+            }
+            
+            return appointmentCard;
+          }
+          
+          // Load appointments when page loads
+          fetchAppointments();
+      });
   </script>
 
 

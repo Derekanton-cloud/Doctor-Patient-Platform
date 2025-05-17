@@ -764,7 +764,7 @@
                     if (confirm('Are you sure you want to cancel this appointment?')) {
                         const appointmentId = this.getAttribute('data-id');
                         try {
-                            const response = await fetch(`/doctor/appointments/${appointmentId}/update`, {
+                            const response = await fetch(`/patient/appointments/${appointmentId}/update`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -848,6 +848,52 @@
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
         });
+
+        // Add debug function to check appointment data
+        async function debugAppointments() {
+            try {
+                const response = await fetch('/patient/debug-appointments');
+                const data = await response.json();
+                console.log('Appointments data:', data);
+                if (data.count === 0) {
+                    alert('No appointments found in the database for your account.');
+                } else {
+                    alert(`Found ${data.count} appointments in the database. Check browser console for details.`);
+                }
+            } catch (error) {
+                console.error('Error fetching appointment data:', error);
+                alert('Error fetching appointment data. Check console for details.');
+            }
+        }
+
+        // Add debug button
+        const debugButton = document.createElement('button');
+        debugButton.innerHTML = '<i class="fas fa-bug"></i> Debug';
+        debugButton.style.padding = '8px 15px';
+        debugButton.style.backgroundColor = '#dc3545';
+        debugButton.style.color = 'white';
+        debugButton.style.border = 'none';
+        debugButton.style.borderRadius = '6px';
+        debugButton.style.cursor = 'pointer';
+        debugButton.style.marginLeft = '10px';
+        debugButton.onclick = debugAppointments;
+        
+        const refreshButton = document.querySelector('.page-title button');
+        if (refreshButton) {
+            refreshButton.parentNode.insertBefore(debugButton, refreshButton.nextSibling);
+        } else {
+            document.querySelector('.page-title').appendChild(debugButton);
+        }
+
+        // Function to refresh appointments
+        function refreshAppointments() {
+            window.location.reload();
+            showToast('Refreshing appointments...', 'success');
+        }
+
+        // Add refresh button to the page title area
+        document.querySelector('.page-title').innerHTML += 
+            '<button onclick="refreshAppointments()" style="margin-left: auto; padding: 8px 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fas fa-sync-alt"></i> Refresh</button>';
     </script>
 </body>
 

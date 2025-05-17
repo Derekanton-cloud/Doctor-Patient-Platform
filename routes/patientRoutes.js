@@ -183,16 +183,31 @@ router.post('/profile/update', authenticateUser, isPatient, upload.single('profi
 });
 
 // My Appointments - View patient's appointments
-router.get('/appointments', async (req, res) => {
+router.get('/appointments', authenticateUser, isPatient, async (req, res) => {
     try {
-        const appointments = req.user
-            ? await Appointment.find({ patient: req.user.id })
-                .populate('doctor', 'firstName lastName specialization profileImage')
-                .sort({ appointmentDate: 1 })
-            : []; // Return an empty array if user is not authenticated
+        console.log('Fetching appointments for patient:', req.user.id);
+        
+        // Fetch all appointments for the patient regardless of status
+        const appointments = await Appointment.find({ 
+            patient: req.user.id 
+        })
+        .populate('doctor', 'firstName lastName specialization profileImage')
+        .sort({ appointmentDate: 1 });
+        
+        console.log(`Found ${appointments.length} appointments for patient ${req.user.id}`);
+        
+        // Log appointment statuses to help debug
+        if (appointments.length > 0) {
+            console.log('Appointment statuses:', appointments.map(a => ({ 
+                id: a._id, 
+                status: a.status,
+                doctor: a.doctor ? `${a.doctor.firstName} ${a.doctor.lastName}` : 'Unknown',
+                date: a.appointmentDate
+            })));
+        }
 
         res.render('patientAppointments', {
-            user: req.user || null,
+            user: req.user,
             appointments
         });
     } catch (error) {
@@ -337,6 +352,46 @@ router.post('/appointments/:id/cancel', authenticateUser, isPatient, async (req,
         console.error('Error cancelling appointment:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
+});
+
+// Debug route to check appointments data (no authentication required)
+router.get('/debug-appointments', async (req, res) => {
+  try {
+    // Since no authentication is required, we need to get patientId from query parameter
+    const patientId = req.query.patientId;
+    
+    if (!patientId) {
+      return res.json({
+        message: 'No patientId provided. Add ?patientId=YOUR_PATIENT_ID to the URL.',
+        count: 0,
+        appointments: []
+      });
+    }
+    
+    // Direct database query to check all appointments for this patient
+    const appointments = await Appointment.find({ 
+      patient: patientId 
+    }).populate('doctor', 'firstName lastName specialization profileImage');
+    
+    // Log the appointments to the server console
+    console.log('Patient appointments debug:');
+    console.log('Patient ID:', patientId);
+    console.log('Appointments count:', appointments.length);
+    
+    // Return the appointments data as JSON
+    return res.json({
+      patientId: patientId,
+      count: appointments.length,
+      appointments: appointments
+    });
+  } catch (error) {
+    console.error('Debug appointments error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error retrieving appointments data',
+      error: error.message
+    });
+  }
 });
 
 module.exports = router;
